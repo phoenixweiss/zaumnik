@@ -18,8 +18,8 @@
     "word:add": "node scripts/add-word.js",
     "words:rebuild": "node scripts/rebuild-words.js",
     "words:import": "node scripts/import-markdown.js",
-    "format": "prettier --write CHANGELOG.md package.json public scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
-    "format:check": "prettier --check CHANGELOG.md package.json public scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
+    "format": "prettier --write .github CHANGELOG.md package.json public scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
+    "format:check": "prettier --check .github CHANGELOG.md package.json public scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
     "quality": "yarn lint && yarn format:check && yarn test"
   },
   "dependencies": {
