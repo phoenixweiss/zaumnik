@@ -57,6 +57,9 @@ const visibleEntries = computed(() =>
 const showResults = computed(
   () => Boolean(store.query.trim() || store.letter) && !selectedEntry.value,
 )
+const showResultArea = computed(
+  () => showResults.value || Boolean(selectedEntry.value),
+)
 
 const searchSuggestions = computed(() => {
   const search = normalizeSearch(store.query)
@@ -76,6 +79,9 @@ const searchSuggestions = computed(() => {
 
 const scrollToResults = async () => {
   await nextTick()
+  await new Promise((resolve) =>
+    window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)),
+  )
   resultsPanel.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
@@ -117,7 +123,8 @@ const selectRelated = (slug) => {
 }
 
 const selectRandom = () => {
-  const entry = readyEntries[Math.floor(Math.random() * readyEntries.length)]
+  const candidates = dictionary.filter((entry) => entry.hasDefinition)
+  const entry = candidates[Math.floor(Math.random() * candidates.length)]
   store.reset()
   selectEntry(entry)
 }
@@ -125,34 +132,59 @@ const selectRandom = () => {
 
 <template>
   <main>
-    <section class="container dictionary-intro">
-      <p>
-        <strong>{{ dictionaryStats.total }}</strong> слов в коллекции
-      </p>
-      <SearchField
-        :model-value="store.query"
-        :placeholder="searchPlaceholder"
-        :suggestions="searchSuggestions"
-        @update:model-value="updateQuery"
-        @select="selectSearchSuggestion"
-        @submit="scrollToResults"
-      />
-      <AlphabetFilter
-        :letters="alphabet"
-        :active-letter="store.letter"
-        @select="selectLetter"
-      />
+    <section class="hero container">
+      <div class="hero-copy">
+        <p class="eyebrow">Редкие · сложные · необычные</p>
+        <h1>Слова, которые интересно узнать.</h1>
+        <p class="hero-lead">
+          Не строгая энциклопедия, а живая коллекция русского языка для тех, кто
+          любит открывать новые слова.
+        </p>
+      </div>
+      <div
+        class="hero-accent"
+        tabindex="0"
+        aria-describedby="hard-sign-caption"
+      >
+        <span aria-hidden="true">Ъ</span>
+        <p id="hard-sign-caption" role="tooltip">
+          твёрдый знак<br />мягкого любопытства
+        </p>
+      </div>
+      <div class="search-wrap">
+        <SearchField
+          :model-value="store.query"
+          :placeholder="searchPlaceholder"
+          :suggestions="searchSuggestions"
+          @update:model-value="updateQuery"
+          @select="selectSearchSuggestion"
+          @submit="scrollToResults"
+        />
+      </div>
+      <div class="hero-alphabet">
+        <p class="eyebrow">Или начните с буквы</p>
+        <AlphabetFilter
+          :letters="alphabet"
+          :active-letter="store.letter"
+          @select="selectLetter"
+        />
+        <p class="collection-count">
+          <strong>{{ dictionaryStats.total }}</strong> слов в коллекции
+        </p>
+      </div>
     </section>
 
     <section
-      v-if="showResults || selectedEntry"
+      v-if="showResultArea"
       ref="resultsPanel"
-      class="container dictionary-results"
+      class="dictionary-results container"
+      :class="{ 'detail-only': selectedEntry && !showResults }"
       aria-label="Результаты словаря"
     >
       <WordList
         v-if="showResults"
         :entries="visibleEntries"
+        :selected-slug="selectedEntry?.slug"
         :result-count="filteredEntries.length"
         :can-show-more="visibleEntries.length < filteredEntries.length"
         @select="selectEntry"

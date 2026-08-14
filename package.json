@@ -16,11 +16,12 @@
     "word:add": "node scripts/add-word.js",
     "words:rebuild": "node scripts/rebuild-words.js",
     "words:import": "node scripts/import-markdown.js",
-    "format": "prettier --write package.json scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
-    "format:check": "prettier --check package.json scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
+    "format": "prettier --write package.json public scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
+    "format:check": "prettier --check package.json public scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
     "quality": "yarn lint && yarn format:check && yarn test:data && yarn test:browser"
   },
   "dependencies": {
+    "@fontsource-variable/merriweather": "5.3.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
     "vue-router": "^4.4.3"

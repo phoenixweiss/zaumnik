@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360">
+  <defs>
+    <path
+      id="frame"
+      d="M160.8 28.5Q180 20 199.2 28.5Q218.3 37 239.2 39.2Q260 41.4 272.3 58.4Q284.7 75.3 301.6 87.7Q318.6 100 320.8 120.8Q323 141.7 331.5 160.8Q340 180 331.5 199.2Q323 218.3 320.8 239.2Q318.6 260 301.6 272.3Q284.7 284.7 272.3 301.6Q260 318.6 239.2 320.8Q218.3 323 199.2 331.5Q180 340 160.8 331.5Q141.7 323 120.8 320.8Q100 318.6 87.7 301.6Q75.3 284.7 58.4 272.3Q41.4 260 39.2 239.2Q37 218.3 28.5 199.2Q20 180 28.5 160.8Q37 141.7 39.2 120.8Q41.4 100 58.4 87.7Q75.3 75.3 87.7 58.4Q100 41.4 120.8 39.2Q141.7 37 160.8 28.5Z"
+    />
+    <g id="outer-petal">
+      <ellipse cx="180" cy="88" rx="38" ry="68" />
+      <ellipse cx="180" cy="89" rx="35" ry="66" />
+      <ellipse cx="180" cy="90" rx="32" ry="64" />
+      <ellipse cx="180" cy="91" rx="29" ry="62" />
+      <ellipse cx="180" cy="92" rx="26" ry="60" />
+      <ellipse cx="180" cy="93" rx="23" ry="58" />
+      <ellipse cx="180" cy="94" rx="20" ry="56" />
+    </g>
+    <g id="inner-petal">
+      <ellipse cx="180" cy="135" rx="25" ry="47" />
+      <ellipse cx="180" cy="136" rx="22" ry="45" />
+      <ellipse cx="180" cy="137" rx="19" ry="43" />
+      <ellipse cx="180" cy="138" rx="16" ry="41" />
+      <ellipse cx="180" cy="139" rx="13" ry="39" />
+    </g>
+    <g id="radial-set">
+      <use href="#outer-petal" />
+      <use href="#outer-petal" transform="rotate(30 180 180)" />
+      <use href="#outer-petal" transform="rotate(60 180 180)" />
+      <use href="#outer-petal" transform="rotate(90 180 180)" />
+      <use href="#outer-petal" transform="rotate(120 180 180)" />
+      <use href="#outer-petal" transform="rotate(150 180 180)" />
+      <use href="#outer-petal" transform="rotate(180 180 180)" />
+      <use href="#outer-petal" transform="rotate(210 180 180)" />
+      <use href="#outer-petal" transform="rotate(240 180 180)" />
+      <use href="#outer-petal" transform="rotate(270 180 180)" />
+      <use href="#outer-petal" transform="rotate(300 180 180)" />
+      <use href="#outer-petal" transform="rotate(330 180 180)" />
+    </g>
+    <g id="inner-set">
+      <use href="#inner-petal" />
+      <use href="#inner-petal" transform="rotate(30 180 180)" />
+      <use href="#inner-petal" transform="rotate(60 180 180)" />
+      <use href="#inner-petal" transform="rotate(90 180 180)" />
+      <use href="#inner-petal" transform="rotate(120 180 180)" />
+      <use href="#inner-petal" transform="rotate(150 180 180)" />
+      <use href="#inner-petal" transform="rotate(180 180 180)" />
+      <use href="#inner-petal" transform="rotate(210 180 180)" />
+      <use href="#inner-petal" transform="rotate(240 180 180)" />
+      <use href="#inner-petal" transform="rotate(270 180 180)" />
+      <use href="#inner-petal" transform="rotate(300 180 180)" />
+      <use href="#inner-petal" transform="rotate(330 180 180)" />
+    </g>
+  </defs>
+
+  <g fill="none" stroke="#163f36" stroke-width="0.8">
+    <g stroke-opacity="0.075">
+      <use href="#radial-set" />
+    </g>
+
+    <g stroke-opacity="0.09">
+      <use href="#frame" />
+      <use href="#frame" transform="translate(180 180) scale(.96) translate(-180 -180)" />
+      <use href="#frame" transform="translate(180 180) scale(.92) translate(-180 -180)" />
+      <use href="#frame" transform="translate(180 180) scale(.70) translate(-180 -180)" />
+      <use href="#frame" transform="translate(180 180) scale(.64) translate(-180 -180)" />
+    </g>
+
+    <g stroke-opacity="0.075">
+      <use href="#inner-set" />
+    </g>
+
+    <circle cx="180" cy="180" r="20" fill="#f4f0e6" fill-opacity="0.94" stroke="none" />
+
+    <g stroke-opacity="0.105">
+      <use href="#frame" transform="translate(180 180) scale(.13) translate(-180 -180)" />
+      <use href="#frame" transform="translate(180 180) scale(.10) translate(-180 -180)" />
+      <circle cx="180" cy="180" r="4" />
+    </g>
+  </g>
+</svg>
