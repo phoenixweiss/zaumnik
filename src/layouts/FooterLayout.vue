@@ -1,7 +1,5 @@
 <script setup>
-import packageMetadata from '../../package.json'
-
-const appVersion = packageMetadata.version
+const appVersion = import.meta.env.VITE_APP_VERSION
 const currentYear = new Date().getFullYear()
 </script>
 

@@ -1,0 +1,18 @@
+# Release and development branches
+GIT_MASTER_BRANCH="main"
+GIT_DEVELOP_BRANCH="dev"
+
+# Keep release logging disabled unless troubleshooting is needed
+ENABLE_LOGGING="false"
+LOG_FILE="bumpster.log"
+
+# Never remove feature branches without a separate decision
+DELETE_FEATURE_BRANCH_AFTER_MERGE="false"
+ASK_BEFORE_DELETING_FEATURE_BRANCH="true"
+
+# Keep VERSION and the root package.json synchronized
+SYNC_WITH_PACKAGE_JSON="true"
+
+# Releases start from and return to the development branch
+BEFORE_BUMP_BRANCH="dev"
+AFTER_BUMP_BRANCH="dev"

@@ -11,14 +11,16 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
+    "test": "yarn test:version && yarn test:data && yarn test:browser",
+    "test:version": "node tests/release/checkVersion.js",
     "test:data": "node --test tests/data/*.test.js tests/scripts/*.test.js",
     "test:browser": "yarn build && playwright test",
     "word:add": "node scripts/add-word.js",
     "words:rebuild": "node scripts/rebuild-words.js",
     "words:import": "node scripts/import-markdown.js",
-    "format": "prettier --write package.json public scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
-    "format:check": "prettier --check package.json public scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
-    "quality": "yarn lint && yarn format:check && yarn test:data && yarn test:browser"
+    "format": "prettier --write CHANGELOG.md package.json public scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
+    "format:check": "prettier --check CHANGELOG.md package.json public scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
+    "quality": "yarn lint && yarn format:check && yarn test"
   },
   "dependencies": {
     "@fontsource-variable/merriweather": "5.3.0",
