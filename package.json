@@ -9,21 +9,26 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "preview": "vite preview",
     "lint": "eslint .",
     "test:data": "node --test tests/data/*.test.js tests/scripts/*.test.js",
+    "test:browser": "yarn build && playwright test",
     "word:add": "node scripts/add-word.js",
     "words:rebuild": "node scripts/rebuild-words.js",
     "words:import": "node scripts/import-markdown.js",
-    "format": "prettier --write package.json scripts src tests docs README.md index.html eslint.config.js vite.config.js",
-    "format:check": "prettier --check package.json scripts src tests docs README.md index.html eslint.config.js vite.config.js",
-    "quality": "yarn lint && yarn format:check && yarn test:data && yarn build"
+    "format": "prettier --write package.json scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
+    "format:check": "prettier --check package.json scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
+    "quality": "yarn lint && yarn format:check && yarn test:data && yarn test:browser"
   },
   "dependencies": {
-    "vue": "^3.4.21"
+    "pinia": "^2.1.7",
+    "vue": "^3.4.21",
+    "vue-router": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
     "@originjs/vite-plugin-content": "^1.0.5",
+    "@playwright/test": "^1.62.1",
     "@vitejs/plugin-vue": "^5.0.4",
     "eslint": "^9.9.1",
     "eslint-plugin-vue": "^9.28.0",

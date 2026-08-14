@@ -9,7 +9,7 @@ const sections = Object.values(wordFiles).sort((left, right) =>
   left.letter.localeCompare(right.letter, 'ru'),
 )
 
-export const dictionary = sections.flatMap((section) =>
+const rawEntries = sections.flatMap((section) =>
   section.words.map((word, index) => ({
     id: `${section.letter}-${index}`,
     letter: section.letter,
@@ -21,11 +21,33 @@ export const dictionary = sections.flatMap((section) =>
     hasDefinition: Boolean(word.definition.trim()),
     synonyms: word.synonyms,
     antonyms: word.antonyms,
-    relations: word.relations,
+    relationData: word.relations,
   })),
 )
 
-export const alphabet = sections.map((section) => section.letter)
+const bySlug = new Map(rawEntries.map((entry) => [entry.slug, entry]))
+
+export const dictionary = rawEntries.map((entry) => ({
+  ...entry,
+  relations: entry.relationData
+    .map((relation) => {
+      const related = bySlug.get(slugify(relation.word))
+      if (!related) return null
+      return {
+        slug: related.slug,
+        name: related.displayName,
+        label: {
+          opposite: 'Противоположное',
+          confused: 'Часто путают',
+          related: 'Связанное',
+        }[relation.type || 'related'],
+      }
+    })
+    .filter(Boolean),
+  relationData: undefined,
+}))
+
+export const alphabet = [...new Set(dictionary.map((entry) => entry.letter))]
 
 export const dictionaryStats = {
   total: dictionary.length,
