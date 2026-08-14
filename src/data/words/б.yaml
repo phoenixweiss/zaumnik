@@ -1,14 +1,16 @@
 letter: Б
 words:
-  - name: Блажь
+  - name: Бифуркация
     stress: []
-    definition: ''
+    definition: >-
+      естественное раздвоение или искусственное разделение на два потока каких-либо процессов,
+      явлений.
     synonyms: []
     antonyms: []
     relations: []
-  - name: Бифуркация
+  - name: Блажь
     stress: []
-    definition: естественное раздвоение или искусственное разделение на два потока каких-либо процессов, явлений.
+    definition: ''
     synonyms: []
     antonyms: []
     relations: []

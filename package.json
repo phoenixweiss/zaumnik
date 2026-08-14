@@ -10,9 +10,12 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "test:data": "node --test tests/data/*.test.js",
-    "format": "prettier --write package.json src tests docs README.md index.html eslint.config.js vite.config.js",
-    "format:check": "prettier --check package.json src tests docs README.md index.html eslint.config.js vite.config.js",
+    "test:data": "node --test tests/data/*.test.js tests/scripts/*.test.js",
+    "word:add": "node scripts/add-word.js",
+    "words:rebuild": "node scripts/rebuild-words.js",
+    "words:import": "node scripts/import-markdown.js",
+    "format": "prettier --write package.json scripts src tests docs README.md index.html eslint.config.js vite.config.js",
+    "format:check": "prettier --check package.json scripts src tests docs README.md index.html eslint.config.js vite.config.js",
     "quality": "yarn lint && yarn format:check && yarn test:data && yarn build"
   },
   "dependencies": {
