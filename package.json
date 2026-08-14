@@ -1,0 +1,30 @@
+{
+  "name": "zaumnik",
+  "version": "0.1.0",
+  "description": "Интерактивный словарь редких, сложных и интересных слов русского языка.",
+  "private": false,
+  "author": "phoenixweiss <phoenixweiss@ya.ru>",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "format": "prettier --write package.json src README.md index.html eslint.config.js vite.config.js",
+    "format:check": "prettier --check package.json src README.md index.html eslint.config.js vite.config.js",
+    "quality": "yarn lint && yarn format:check && yarn build"
+  },
+  "dependencies": {
+    "vue": "^3.4.21"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "eslint": "^9.9.1",
+    "eslint-plugin-vue": "^9.28.0",
+    "globals": "^15.9.0",
+    "prettier": "^3.2.5",
+    "sass": "1.93.3",
+    "vite": "^5.1.5"
+  }
+}
