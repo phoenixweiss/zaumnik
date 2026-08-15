@@ -32,7 +32,7 @@ const expectedSeedWords = [
   'Импликация',
   'Кабала',
   'Каверза',
-  'Лаг, временной лаг',
+  'Лаг',
   'Либерализм',
   'Манифестация',
   'Манчкин',
@@ -65,6 +65,27 @@ test('импортирован полный набор названий из и�
   const names = new Set(words.map((word) => word.name))
   for (const expectedWord of expectedSeedWords) {
     assert.ok(names.has(expectedWord), `Не найдено слово «${expectedWord}»`)
+  }
+})
+
+test('согласованные заголовки хранятся в единой форме', () => {
+  const names = new Set(words.map((word) => word.name))
+
+  for (const name of [
+    'Аффирмация',
+    'Предтеча',
+    'Лаг',
+    'Эквилибриум',
+    'Экивоки',
+  ]) {
+    assert.ok(names.has(name), `Не найдено слово «${name}»`)
+  }
+
+  for (const legacyName of ['Аффирмации', 'Предтечи', 'Лаг, временной лаг']) {
+    assert.ok(
+      !names.has(legacyName),
+      `Остался старый заголовок «${legacyName}»`,
+    )
   }
 })
 
@@ -165,8 +186,8 @@ test('адрес слова сохраняет русскую букву й', ()
 
 test('ударения нумеруются только по буквам', () => {
   assert.equal(
-    formatWord('Лаг, временной лаг', [2, 11, 14]),
-    'Ла́г, временно́й ла́г',
+    formatWord('Когнитивный диссонанс', [7, 18]),
+    'Когнити́вный диссона́нс',
   )
 })
 
