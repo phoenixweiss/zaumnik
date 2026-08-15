@@ -410,16 +410,17 @@ input:focus-visible {
   width: 2.7rem;
   height: 2.7rem;
   margin: 0;
-  padding: 0 0 0.14rem;
+  padding: 0;
   border: 0;
   border-radius: 50%;
   background: transparent;
   box-shadow: none;
   color: var(--rust);
   font-family: var(--sans);
-  font-size: 2.25rem;
+  font-size: 2rem;
   font-weight: 800;
   line-height: 1;
+  text-align: center;
   place-items: center;
   transform: translateY(-50%);
 }
