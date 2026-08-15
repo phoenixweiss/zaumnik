@@ -1,4 +1,14 @@
 <script setup>
+const wordForm = (count) => {
+  const mod100 = count % 100
+  const mod10 = count % 10
+
+  if (mod100 >= 11 && mod100 <= 14) return 'слов'
+  if (mod10 === 1) return 'слово'
+  if (mod10 >= 2 && mod10 <= 4) return 'слова'
+  return 'слов'
+}
+
 defineProps({
   entries: { type: Array, required: true },
   selectedSlug: { type: String, default: '' },
@@ -16,7 +26,7 @@ defineEmits(['select', 'show-more', 'reset', 'propose'])
       <div>
         <p class="eyebrow">Коллекция</p>
         <h2 id="word-list-title">
-          {{ resultCount }} {{ resultCount === 1 ? 'слово' : 'слов' }}
+          {{ resultCount }} {{ wordForm(resultCount) }}
         </h2>
       </div>
       <span class="list-key"><i class="ready-dot"></i> с определением</span>

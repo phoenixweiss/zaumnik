@@ -17,8 +17,9 @@ const router = useRouter()
 const resultsPanel = ref(null)
 
 const readyEntries = dictionary.filter((entry) => entry.hasDefinition)
+const exampleEntries = readyEntries.length ? readyEntries : dictionary
 const exampleEntry =
-  readyEntries[Math.floor(Math.random() * readyEntries.length)]
+  exampleEntries[Math.floor(Math.random() * exampleEntries.length)]
 const exampleName = `${exampleEntry.displayName[0].toLocaleLowerCase('ru-RU')}${exampleEntry.displayName.slice(1)}`
 const searchPlaceholder = `Например, ${exampleName}`
 

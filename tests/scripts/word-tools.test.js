@@ -134,6 +134,52 @@ test('безопасный импорт берёт два слова на бук
   )
 })
 
+test('импорт полного списка названий очищает редакционные поля', () => {
+  const fixtureDirectory = temporaryWords()
+  const wordsDirectory = temporaryWords()
+  const sourcePath = resolve(fixtureDirectory, 'source.md')
+  const environment = {
+    ...process.env,
+    ZAUMNIK_WORDS_DIRECTORY: wordsDirectory,
+    ZAUMNIK_SOURCE_PATH: sourcePath,
+  }
+
+  writeFileSync(
+    sourcePath,
+    [
+      '## А',
+      '**Аберра́ция** — Первое определение.',
+      'Абстиненция',
+      '',
+      '## Б',
+      '**Бифуркация** — Второе определение.',
+    ].join('\n'),
+  )
+
+  execFileSync(
+    process.execPath,
+    ['scripts/import-markdown.js', '--names-only'],
+    { cwd: resolve('.'), env: environment },
+  )
+
+  const imported = ['а.yaml', 'б.yaml'].flatMap(
+    (file) =>
+      yaml.load(readFileSync(resolve(wordsDirectory, file), 'utf8')).words,
+  )
+
+  assert.deepEqual(
+    imported.map((word) => word.name),
+    ['Аберрация', 'Абстиненция', 'Бифуркация'],
+  )
+  for (const word of imported) {
+    assert.deepEqual(word.stress, [])
+    assert.equal(word.definition, '')
+    assert.deepEqual(word.synonyms, [])
+    assert.deepEqual(word.antonyms, [])
+    assert.deepEqual(word.relations, [])
+  }
+})
+
 test('импорт без явного режима не изменяет словарные файлы', () => {
   const wordsDirectory = temporaryWords()
   const environment = {

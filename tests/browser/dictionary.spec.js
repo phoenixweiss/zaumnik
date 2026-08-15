@@ -70,13 +70,11 @@ test('предлагает подходящие слова и поддержив
   )
 })
 
-test('ищет не только по названию, но и по тексту определения', async ({
-  page,
-}) => {
+test('ищет слово по фрагменту названия', async ({ page }) => {
   await page.goto('./')
 
   const search = page.getByRole('searchbox')
-  await search.fill('истинности')
+  await search.fill('аберр')
   await search.press('Enter')
 
   const list = page.locator('.word-list-panel')
@@ -123,14 +121,14 @@ test('кнопка другого слова не возвращает теку�
 test('объясняет отсутствие слова с известной буквой и предлагает его добавить', async ({
   page,
 }) => {
-  await page.goto('./#/word/пафос')
+  await page.goto('./#/word/прокрастинация')
 
   const missingWord = page.locator('.missing-word')
   await expect(missingWord).toBeVisible()
   await expect
     .poll(() => page.evaluate(() => window.scrollY))
     .toBeGreaterThan(0)
-  await expect(missingWord.getByRole('heading')).toHaveText('«Пафос»')
+  await expect(missingWord.getByRole('heading')).toHaveText('«Прокрастинация»')
   await expect(missingWord).toContainText('Возможно, в написании есть опечатка')
 
   const issue = missingWord.getByRole('link', {
@@ -181,16 +179,18 @@ test('предлагает добавить слово из пустой пои�
   await page.goto('./')
 
   const search = page.getByRole('searchbox')
-  await search.fill('Пафос')
+  await search.fill('Прокрастинация')
 
   const emptyState = page.locator('.empty-state')
   const propose = emptyState.getByRole('button', {
-    name: 'Предложить добавить «Пафос»',
+    name: 'Предложить добавить «Прокрастинация»',
   })
   await expect(propose).toBeVisible()
 
   await propose.click()
-  await expect(page).toHaveURL(/#\/word\/%D0%BF%D0%B0%D1%84%D0%BE%D1%81$/)
+  await expect(page).toHaveURL(
+    /#\/word\/%D0%BF%D1%80%D0%BE%D0%BA%D1%80%D0%B0%D1%81%D1%82%D0%B8%D0%BD%D0%B0%D1%86%D0%B8%D1%8F$/,
+  )
   await expect(page.locator('.missing-word')).toBeVisible()
 })
 
@@ -198,10 +198,12 @@ test('открывает предложение слова по Enter из по�
   await page.goto('./')
 
   const search = page.getByRole('searchbox')
-  await search.fill('Пафос')
+  await search.fill('Прокрастинация')
   await search.press('Enter')
 
-  await expect(page).toHaveURL(/#\/word\/%D0%BF%D0%B0%D1%84%D0%BE%D1%81$/)
+  await expect(page).toHaveURL(
+    /#\/word\/%D0%BF%D1%80%D0%BE%D0%BA%D1%80%D0%B0%D1%81%D1%82%D0%B8%D0%BD%D0%B0%D1%86%D0%B8%D1%8F$/,
+  )
   await expect(page.locator('.missing-word')).toBeVisible()
 })
 
@@ -215,9 +217,15 @@ test('считает запрос из одной буквы фильтром п
   const rows = list.locator('.word-row')
   const showMore = list.getByRole('button', { name: 'Показать ещё' })
 
-  await expect(list.getByRole('heading')).toHaveText('2 слов')
-  await expect(rows).toHaveCount(2)
+  await expect(list.getByRole('heading')).toHaveText('31 слово')
+  await expect(rows).toHaveCount(10)
   await expect(rows.first()).toContainText(/^А/)
+  await showMore.click()
+  await expect(rows).toHaveCount(20)
+  await showMore.click()
+  await expect(rows).toHaveCount(30)
+  await showMore.click()
+  await expect(rows).toHaveCount(31)
   await expect(showMore).toHaveCount(0)
 })
 
@@ -245,7 +253,7 @@ test('оставляет только общее число слов и не п�
   await page.goto('./')
 
   await expect(page.locator('.collection-count')).toHaveText(
-    '38 слов в коллекции',
+    '218 слов в коллекции',
   )
   await expect(page.locator('.dictionary-summary')).toHaveCount(0)
   await expect(page.locator('.word-list-panel, .word-detail')).toHaveCount(0)

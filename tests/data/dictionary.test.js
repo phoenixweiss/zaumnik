@@ -17,7 +17,7 @@ const words = sections.flatMap((section) =>
   section.words.map((word) => ({ ...word, letter: section.letter })),
 )
 
-const expectedWords = [
+const expectedSeedWords = [
   'Аберрация',
   'Абстиненция',
   'Блажь',
@@ -58,22 +58,24 @@ const expectedWords = [
   'Эгрегор',
 ]
 
-test('начальный набор взят из первых строк буквенных разделов исходника', () => {
+test('импортирован полный набор названий из исходной подборки', () => {
   assert.equal(sections.length, 20)
-  assert.equal(words.length, 38)
-  assert.deepEqual(
-    words
-      .map((word) => word.name)
-      .sort((left, right) => left.localeCompare(right, 'ru')),
-    expectedWords.sort((left, right) => left.localeCompare(right, 'ru')),
-  )
+  assert.equal(words.length, 218)
+
+  const names = new Set(words.map((word) => word.name))
+  for (const expectedWord of expectedSeedWords) {
+    assert.ok(names.has(expectedWord), `Не найдено слово «${expectedWord}»`)
+  }
 })
 
-test('определения оставлены только у двух первых готовых статей', () => {
-  assert.deepEqual(
-    words.filter((word) => word.definition).map((word) => word.name),
-    ['Аберрация', 'Бифуркация'],
-  )
+test('редакционные поля полного импорта оставлены пустыми', () => {
+  for (const word of words) {
+    assert.deepEqual(word.stress, [])
+    assert.equal(word.definition, '')
+    assert.deepEqual(word.synonyms, [])
+    assert.deepEqual(word.antonyms, [])
+    assert.deepEqual(word.relations, [])
+  }
 })
 
 test('каждая запись содержит расширяемые словарные поля', () => {
