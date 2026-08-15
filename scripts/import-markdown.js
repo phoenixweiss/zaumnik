@@ -41,6 +41,7 @@ const nameOverrides = new Map([
   ['Паттернализм', 'Патернализм'],
   ['Препон', 'Препона'],
   ['Рекеровка', 'Рокировка'],
+  ['Цуцванг', 'Цугцванг'],
 ])
 
 const normalizeName = (name) => nameOverrides.get(name) ?? name
