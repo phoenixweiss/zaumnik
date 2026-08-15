@@ -65,7 +65,8 @@ words:
       - банальный
       - заурядный
       - обыденный
-    antonyms: []
+    antonyms:
+      - оригинальный
     relations: []
   - name: Троглодит
     stress:

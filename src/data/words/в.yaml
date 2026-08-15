@@ -18,7 +18,8 @@ words:
     synonyms:
       - речевой
       - словесный
-    antonyms: []
+    antonyms:
+      - невербальный
     relations: []
   - name: Визави
     stress:

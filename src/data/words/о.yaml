@@ -55,7 +55,8 @@ words:
     synonyms:
       - косвенный
       - обходной
-    antonyms: []
+    antonyms:
+      - прямой
     relations: []
   - name: Оммаж
     stress:

@@ -127,7 +127,8 @@ words:
     synonyms:
       - застой
       - спад
-    antonyms: []
+    antonyms:
+      - подъём
     relations: []
   - name: Ригидность
     stress:
@@ -139,7 +140,8 @@ words:
     synonyms:
       - негибкость
       - неподатливость
-    antonyms: []
+    antonyms:
+      - гибкость
     relations: []
   - name: Рокировка
     stress:

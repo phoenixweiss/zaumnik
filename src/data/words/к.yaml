@@ -194,7 +194,8 @@ words:
       похожих условиях.
     synonyms:
       - сходящийся
-    antonyms: []
+    antonyms:
+      - дивергентный
     relations: []
   - name: Конгломерат
     stress:
@@ -254,7 +255,8 @@ words:
       - дородный
       - полный
       - тучный
-    antonyms: []
+    antonyms:
+      - субтильный
     relations: []
   - name: Корреляция
     stress:

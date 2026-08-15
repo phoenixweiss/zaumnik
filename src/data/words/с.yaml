@@ -9,7 +9,8 @@ words:
     synonyms:
       - святой
       - священный
-    antonyms: []
+    antonyms:
+      - профанный
     relations: []
   - name: Саммит
     stress:
@@ -114,7 +115,8 @@ words:
       - нежный
       - тонкий
       - хрупкий
-    antonyms: []
+    antonyms:
+      - корпулентный
     relations: []
   - name: Супостат
     stress:

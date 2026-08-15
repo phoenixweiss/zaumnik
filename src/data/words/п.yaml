@@ -10,7 +10,8 @@ words:
       - равенство
       - равновесие
       - равноправие
-    antonyms: []
+    antonyms:
+      - неравенство
     relations: []
   - name: Парнас
     stress:
