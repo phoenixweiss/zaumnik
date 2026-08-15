@@ -197,7 +197,24 @@ input:focus-visible {
 }
 
 .header-inner {
-  min-height: 2.8rem;
+  min-height: 2.55rem;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: nowrap;
+  line-height: 1;
+}
+
+.header-separator {
+  display: block;
+  width: 1px;
+  height: 1.45rem;
+  background: var(--forest);
+  opacity: 0.45;
+  flex: 0 0 auto;
 }
 
 .brand {
@@ -210,7 +227,7 @@ input:focus-visible {
 .brand strong {
   display: block;
   font-family: var(--serif);
-  font-size: 2.15rem;
+  font-size: 1.95rem;
   font-weight: 750;
   letter-spacing: -0.035em;
   line-height: 1;
@@ -218,9 +235,27 @@ input:focus-visible {
 
 .header-tagline {
   color: var(--ink-muted);
-  font-size: 0.82rem;
+  font-size: 0.75rem;
   letter-spacing: 0.035em;
-  line-height: 1;
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.header-about {
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 0.95rem;
+}
+
+.header-about:hover,
+.header-about:focus-visible {
+  color: var(--forest);
 }
 
 .hero {
@@ -594,6 +629,38 @@ input:focus-visible {
   color: var(--ink-muted);
   font-size: 0.62rem;
   line-height: 1.35;
+}
+
+.about-page {
+  max-width: min(640px, calc(100% - 3rem));
+  padding-top: 2rem;
+}
+
+.about-header {
+  margin-bottom: 1.2rem;
+}
+
+.about-header h1 {
+  margin: 0;
+  color: var(--forest);
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 4vw, 4rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+}
+
+.about-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  color: var(--ink);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.about-content p {
+  margin: 0;
 }
 
 .progress-ring {

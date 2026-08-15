@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 
+import AboutView from '@/views/AboutView.vue'
 import DictionaryView from '@/views/DictionaryView.vue'
 
 const router = createRouter({
@@ -7,6 +8,7 @@ const router = createRouter({
   routes: [
     { path: '/', name: 'dictionary', component: DictionaryView },
     { path: '/word/:slug', name: 'word', component: DictionaryView },
+    { path: '/about', name: 'about', component: AboutView },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
   scrollBehavior() {
