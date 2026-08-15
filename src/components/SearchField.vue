@@ -103,7 +103,7 @@ const clearSearch = async () => {
       aria-label="Очистить поиск"
       @click="clearSearch"
     >
-      ×
+      <span class="search-clear-icon" aria-hidden="true"></span>
     </button>
     <ul
       v-if="showSuggestions"
