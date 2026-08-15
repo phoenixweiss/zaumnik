@@ -120,6 +120,35 @@ test('кнопка другого слова не возвращает теку�
   )
 })
 
+test('показывает связи и не расширяет карточку на узком экране', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('./#/word/диссонанс')
+
+  const relations = page.getByRole('region', { name: 'Рядом по смыслу' })
+  await expect(relations).toBeVisible()
+  await expect(relations.getByRole('button')).toContainText(
+    'Когнитивный диссонанс',
+  )
+
+  const layout = await page.evaluate(() => {
+    const detail = document
+      .querySelector('.word-detail')
+      .getBoundingClientRect()
+    return {
+      detailLeft: detail.left,
+      detailRight: detail.right,
+      pageWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }
+  })
+
+  expect(layout.detailLeft).toBeGreaterThanOrEqual(0)
+  expect(layout.detailRight).toBeLessThanOrEqual(layout.pageWidth)
+  expect(layout.scrollWidth).toBe(layout.pageWidth)
+})
+
 test('ставит знак ударения над самой гласной', async ({ page }) => {
   await page.goto('./#/word/дежавю')
 

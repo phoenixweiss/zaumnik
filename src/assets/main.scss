@@ -1505,6 +1505,8 @@ input:focus-visible {
 
   .word-detail {
     order: 1;
+    grid-row: auto;
+    grid-column: auto;
     min-height: 0;
     padding: 2rem 0;
     border-top: 1px solid var(--line);
@@ -1525,6 +1527,11 @@ input:focus-visible {
 }
 
 @media (max-width: 400px) {
+  .header-separator,
+  .header-tagline {
+    display: none;
+  }
+
   .site-footer .footer-inner {
     grid-template-columns: auto 1fr;
     padding-block: 0.25rem;
