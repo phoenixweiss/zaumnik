@@ -1,0 +1,124 @@
+name: Deploy release to GitHub Pages
+run-name: Pages · ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Published stable release tag to deploy
+        required: true
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build release artifact
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pages: read
+
+    steps:
+      - name: Check out release
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.12.0
+
+      - name: Verify published release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          if [[ ! "$RELEASE_TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            printf 'Expected a stable release tag, found %s.\n' "$RELEASE_TAG" >&2
+            exit 1
+          fi
+
+          node tests/release/checkVersion.js "$RELEASE_TAG"
+
+          release_commit="$(git rev-parse "$RELEASE_TAG^{commit}")"
+          checked_out_commit="$(git rev-parse HEAD)"
+
+          if [[ "$release_commit" != "$checked_out_commit" ]]; then
+            printf 'Release tag %s does not point to checked out commit %s.\n' \
+              "$RELEASE_TAG" \
+              "$checked_out_commit" >&2
+            exit 1
+          fi
+
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          git merge-base --is-ancestor "$release_commit" origin/main
+
+          gh api \
+            "repos/$GITHUB_REPOSITORY/releases/tags/$RELEASE_TAG" \
+            > "$RUNNER_TEMP/pages-release.json"
+
+          jq -e \
+            --arg tag "$RELEASE_TAG" \
+            '
+              .draft == false and
+              .prerelease == false and
+              .tag_name == $tag
+            ' \
+            "$RUNNER_TEMP/pages-release.json" >/dev/null
+
+      - name: Enable Yarn Classic
+        run: |
+          corepack enable
+          corepack prepare yarn@1.22.22 --activate
+
+      - name: Verify runtime versions
+        run: |
+          test "$(node --version)" = "v22.12.0"
+          test "$(yarn --version)" = "1.22.22"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --non-interactive
+
+      - name: Install Chromium
+        run: yarn playwright install --with-deps --only-shell chromium
+
+      - name: Run quality checks and build
+        run: yarn quality
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    name: Deploy release
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
