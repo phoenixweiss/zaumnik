@@ -105,7 +105,22 @@ test('показывает слова по букве и открывает сл
   await expect(list).toHaveCount(0)
 })
 
-test('объясняет отсутствие слова и предлагает способы его добавить', async ({
+test('кнопка другого слова не возвращает текущую статью', async ({ page }) => {
+  await page.goto('./#/word/аберрация')
+
+  const detail = page.locator('.word-detail')
+  const heading = detail.getByRole('heading')
+  await expect(heading).toHaveText('Аберрация')
+
+  await detail.getByRole('button', { name: 'Другое слово' }).click()
+
+  await expect(heading).not.toHaveText('Аберрация')
+  await expect(page).not.toHaveURL(
+    /#\/word\/%D0%B0%D0%B1%D0%B5%D1%80%D1%80%D0%B0%D1%86%D0%B8%D1%8F$/,
+  )
+})
+
+test('объясняет отсутствие слова с известной буквой и предлагает его добавить', async ({
   page,
 }) => {
   await page.goto('./#/word/пафос')

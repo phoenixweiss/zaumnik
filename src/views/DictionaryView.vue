@@ -171,7 +171,13 @@ const selectRelated = (slug) => {
 }
 
 const selectRandom = () => {
-  const candidates = dictionary.filter((entry) => entry.hasDefinition)
+  const readyCandidates = dictionary.filter(
+    (entry) => entry.hasDefinition && entry.slug !== selectedEntry.value?.slug,
+  )
+  const candidates = readyCandidates.length
+    ? readyCandidates
+    : dictionary.filter((entry) => entry.slug !== selectedEntry.value?.slug)
+  if (!candidates.length) return
   const entry = candidates[Math.floor(Math.random() * candidates.length)]
   store.reset()
   selectEntry(entry)
