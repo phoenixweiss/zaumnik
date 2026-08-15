@@ -68,10 +68,10 @@ test('импортирован полный набор названий из и�
   }
 })
 
-test('редакционные поля полного импорта оставлены пустыми', () => {
+test('все слова получили определения без преждевременного заполнения остальных полей', () => {
   for (const word of words) {
+    assert.ok(word.definition)
     assert.deepEqual(word.stress, [])
-    assert.equal(word.definition, '')
     assert.deepEqual(word.synonyms, [])
     assert.deepEqual(word.antonyms, [])
     assert.deepEqual(word.relations, [])

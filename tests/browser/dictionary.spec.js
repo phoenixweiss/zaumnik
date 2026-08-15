@@ -70,11 +70,13 @@ test('предлагает подходящие слова и поддержив
   )
 })
 
-test('ищет слово по фрагменту названия', async ({ page }) => {
+test('ищет не только по названию, но и по тексту определения', async ({
+  page,
+}) => {
   await page.goto('./')
 
   const search = page.getByRole('searchbox')
-  await search.fill('аберр')
+  await search.fill('искажения изображения')
   await search.press('Enter')
 
   const list = page.locator('.word-list-panel')
