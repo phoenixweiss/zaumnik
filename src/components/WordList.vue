@@ -1,4 +1,6 @@
 <script setup>
+import WordName from './WordName.vue'
+
 const wordForm = (count) => {
   const mod100 = count % 100
   const mod10 = count % 10
@@ -42,7 +44,9 @@ defineEmits(['select', 'show-more', 'reset', 'propose'])
         @click="$emit('select', entry)"
       >
         <span>
-          <strong>{{ entry.displayName }}</strong>
+          <strong
+            ><WordName :name="entry.name" :stress="entry.stress"
+          /></strong>
           <small>{{
             entry.hasDefinition ? entry.definition : 'Определение в работе'
           }}</small>

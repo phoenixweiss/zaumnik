@@ -1,4 +1,6 @@
 <script setup>
+import WordName from './WordName.vue'
+
 defineProps({
   entry: { type: Object, required: true },
   isDaily: { type: Boolean, default: false },
@@ -13,7 +15,7 @@ defineEmits(['random', 'select-related'])
       <span class="word-letter" aria-hidden="true">{{ entry.letter }}</span>
       <div>
         <p class="eyebrow">{{ isDaily ? 'Слово дня' : 'Словарная статья' }}</p>
-        <h2>{{ entry.displayName }}</h2>
+        <h2><WordName :name="entry.name" :stress="entry.stress" /></h2>
       </div>
     </header>
 
@@ -42,7 +44,9 @@ defineEmits(['random', 'select-related'])
         @click="$emit('select-related', relation.slug)"
       >
         <small>{{ relation.label }}</small>
-        <strong>{{ relation.name }}</strong>
+        <strong>
+          <WordName :name="relation.name" :stress="relation.stress" />
+        </strong>
         <span aria-hidden="true">→</span>
       </button>
     </section>

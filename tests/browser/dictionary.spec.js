@@ -120,6 +120,17 @@ test('кнопка другого слова не возвращает теку�
   )
 })
 
+test('ставит знак ударения над самой гласной', async ({ page }) => {
+  await page.goto('./#/word/дежавю')
+
+  const heading = page.locator('.word-detail').getByRole('heading')
+  const word = heading.locator('.word-name')
+
+  await expect(heading).toHaveText('Дежавю')
+  await expect(word).toHaveAttribute('aria-label', 'Дежавю́')
+  await expect(word.locator('.stress-mark')).toHaveText('ю')
+})
+
 test('объясняет отсутствие слова с известной буквой и предлагает его добавить', async ({
   page,
 }) => {

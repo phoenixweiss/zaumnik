@@ -1081,6 +1081,29 @@ input:focus-visible {
   overflow-wrap: anywhere;
 }
 
+.stress-mark {
+  position: relative;
+  display: inline-block;
+}
+
+.stress-mark::after {
+  position: absolute;
+  top: -0.08em;
+  left: 62%;
+  width: 0.065em;
+  height: 0.24em;
+  border-radius: 999px;
+  background: currentColor;
+  content: '';
+  pointer-events: none;
+  transform: translateX(-50%) rotate(24deg);
+  transform-origin: center;
+}
+
+.word-row .stress-mark::after {
+  top: 0.2em;
+}
+
 .definition {
   margin: 3rem 0;
 }

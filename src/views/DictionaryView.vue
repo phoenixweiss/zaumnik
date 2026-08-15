@@ -20,7 +20,7 @@ const readyEntries = dictionary.filter((entry) => entry.hasDefinition)
 const exampleEntries = readyEntries.length ? readyEntries : dictionary
 const exampleEntry =
   exampleEntries[Math.floor(Math.random() * exampleEntries.length)]
-const exampleName = `${exampleEntry.displayName[0].toLocaleLowerCase('ru-RU')}${exampleEntry.displayName.slice(1)}`
+const exampleName = `${exampleEntry.name[0].toLocaleLowerCase('ru-RU')}${exampleEntry.name.slice(1)}`
 const searchPlaceholder = `Например, ${exampleName}`
 
 const normalizeSearch = (value) =>
@@ -107,7 +107,6 @@ const searchSuggestions = computed(() => {
       return left.name.localeCompare(right.name, 'ru-RU')
     })
     .slice(0, 7)
-    .map((entry) => entry.displayName)
 })
 
 const scrollToResults = async () => {
@@ -145,12 +144,8 @@ const selectEntry = async (entry) => {
 }
 
 const selectSearchSuggestion = (suggestion) => {
-  const entry = dictionary.find(
-    (item) => normalizeSearch(item.displayName) === normalizeSearch(suggestion),
-  )
-  if (!entry) return
-  store.setQuery(entry.displayName)
-  selectEntry(entry)
+  store.setQuery(suggestion.name)
+  selectEntry(suggestion)
 }
 
 const selectLetter = async (letter) => {

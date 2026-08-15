@@ -35,7 +35,8 @@ export const dictionary = rawEntries.map((entry) => ({
       if (!related) return null
       return {
         slug: related.slug,
-        name: related.displayName,
+        name: related.name,
+        stress: related.stress,
         label: {
           opposite: 'Противоположное',
           confused: 'Часто путают',
