@@ -37,8 +37,10 @@ const filteredEntries = computed(() => {
   const search = normalizeSearch(store.query)
 
   if (search) {
-    if (search.length === 1 && alphabet.includes(search)) {
-      return dictionary.filter((entry) => entry.letter === search)
+    if (search.length === 1 && alphabet.includes(search.toLocaleUpperCase('ru-RU'))) {
+      return dictionary.filter(
+        (entry) => entry.letter.toLocaleLowerCase('ru-RU') === search,
+      )
     }
 
     return dictionary.filter((entry) =>
