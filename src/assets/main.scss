@@ -1033,7 +1033,7 @@ input:focus-visible {
   top: 0;
   right: 50%;
   width: min(1140px, calc(100% - 3.5rem));
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--ink);
   content: '';
   transform: translateX(50%);
 }
