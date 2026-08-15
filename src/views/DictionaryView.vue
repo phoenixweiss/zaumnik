@@ -57,6 +57,14 @@ const filteredEntries = computed(() => {
       )
     }
 
+    const nameMatches = dictionary.filter((entry) =>
+      normalizeSearch(entry.name).includes(search),
+    )
+
+    if (search.length <= 2 || nameMatches.length) {
+      return nameMatches
+    }
+
     return dictionary.filter((entry) =>
       [entry.name, entry.definition, ...entry.synonyms, ...entry.antonyms].some(
         (value) => normalizeSearch(value).includes(search),
