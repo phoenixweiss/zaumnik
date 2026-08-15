@@ -157,6 +157,24 @@ test('объясняет отсутствие слова с известной �
   )
 })
 
+test('объясняет, как создать YAML для ещё не представленной буквы', async ({
+  page,
+}) => {
+  await page.goto('./#/word/юстировка')
+
+  const missingWord = page.locator('.missing-word')
+  const yaml = missingWord.getByRole('link', {
+    name: /Создать YAML для буквы «Ю»/,
+  })
+
+  await expect(yaml).toBeVisible()
+  await expect(yaml).toHaveAttribute(
+    'href',
+    /blob\/dev\/docs\/data-format\.md#.*$/,
+  )
+  await expect(yaml).toContainText('Команда word:add создаст его локально')
+})
+
 test('предлагает добавить слово из пустой поисковой выдачи', async ({
   page,
 }) => {

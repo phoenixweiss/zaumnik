@@ -12,6 +12,10 @@ defineEmits(['reset'])
 const repositoryUrl = 'https://github.com/phoenixweiss/zaumnik'
 
 const normalizedWord = computed(() => props.word.replace(/-/g, ' ').trim())
+const wordLetter = computed(() =>
+  normalizedWord.value[0]?.toLocaleUpperCase('ru-RU'),
+)
+const hasLetterFile = computed(() => alphabet.includes(wordLetter.value))
 const displayWord = computed(() => {
   const word = normalizedWord.value
   if (!word) return 'Неизвестное слово'
@@ -40,14 +44,25 @@ const issueUrl = computed(() => {
 })
 
 const yamlUrl = computed(() => {
-  const letter = normalizedWord.value[0]?.toLocaleUpperCase('ru-RU')
-  if (!alphabet.includes(letter))
-    return `${repositoryUrl}/tree/dev/src/data/words`
+  if (!hasLetterFile.value)
+    return `${repositoryUrl}/blob/dev/docs/data-format.md#служебные-команды`
 
   return `${repositoryUrl}/edit/dev/src/data/words/${encodeURIComponent(
-    letter.toLocaleLowerCase('ru-RU'),
+    wordLetter.value.toLocaleLowerCase('ru-RU'),
   )}.yaml`
 })
+
+const yamlAction = computed(() =>
+  hasLetterFile.value
+    ? 'Добавить слово в YAML'
+    : `Создать YAML для буквы «${wordLetter.value || '?'}»`,
+)
+
+const yamlHint = computed(() =>
+  hasLetterFile.value
+    ? 'Внесите запись по принятой структуре в файл нужной буквы и отправьте pull request.'
+    : `Файла «${wordLetter.value?.toLocaleLowerCase('ru-RU') || '?'}.yaml» пока нет. Команда word:add создаст его локально — останется отправить pull request.`,
+)
 
 const emailUrl = computed(() => {
   const subject = `[Заумникъ] Предлагаю добавить слово — ${normalizedWord.value}`
@@ -92,11 +107,8 @@ const emailUrl = computed(() => {
 
       <a :href="yamlUrl" target="_blank" rel="noreferrer">
         <small>Если вы умеете кодить</small>
-        <strong>Добавить слово в YAML</strong>
-        <span>
-          Внесите запись по принятой структуре в файл нужной буквы и отправьте
-          pull request.
-        </span>
+        <strong>{{ yamlAction }}</strong>
+        <span>{{ yamlHint }}</span>
         <i aria-hidden="true">→</i>
       </a>
 
