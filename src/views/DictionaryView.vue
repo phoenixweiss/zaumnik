@@ -37,6 +37,10 @@ const filteredEntries = computed(() => {
   const search = normalizeSearch(store.query)
 
   if (search) {
+    if (search.length === 1 && alphabet.includes(search)) {
+      return dictionary.filter((entry) => entry.letter === search)
+    }
+
     return dictionary.filter((entry) =>
       [entry.name, entry.definition, ...entry.synonyms, ...entry.antonyms].some(
         (value) => normalizeSearch(value).includes(search),
