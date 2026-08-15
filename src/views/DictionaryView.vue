@@ -3,10 +3,12 @@ import { computed, nextTick, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import AlphabetFilter from '@/components/AlphabetFilter.vue'
+import MissingWord from '@/components/MissingWord.vue'
 import SearchField from '@/components/SearchField.vue'
 import WordDetail from '@/components/WordDetail.vue'
 import WordList from '@/components/WordList.vue'
 import { alphabet, dictionary, dictionaryStats } from '@/data/dictionary'
+import { slugify } from '@/data/word'
 import { useDictionaryStore } from '@/stores/dictionary'
 
 const store = useDictionaryStore()
@@ -32,15 +34,17 @@ const normalizeSearch = (value) =>
 const selectedEntry = computed(() =>
   dictionary.find((entry) => entry.slug === route.params.slug),
 )
+const missingWord = computed(
+  () => route.name === 'word' && !selectedEntry.value,
+)
+const requestedWord = computed(() => String(route.params.slug ?? ''))
 
 const activeAlphabetLetter = computed(() => {
   const search = normalizeSearch(store.query)
   const normalized = search.toLocaleUpperCase('ru-RU')
 
   if (search.length === 1 && alphabet.includes(normalized)) {
-    const hasMatches = dictionary.some(
-      (entry) => entry.letter === normalized,
-    )
+    const hasMatches = dictionary.some((entry) => entry.letter === normalized)
     if (hasMatches) return normalized
   }
 
@@ -83,10 +87,10 @@ const visibleEntries = computed(() =>
   filteredEntries.value.slice(0, store.visibleCount),
 )
 const showResults = computed(
-  () => Boolean(store.query.trim() || store.letter) && !selectedEntry.value,
+  () => Boolean(store.query.trim() || store.letter) && route.name !== 'word',
 )
 const showResultArea = computed(
-  () => showResults.value || Boolean(selectedEntry.value),
+  () => showResults.value || Boolean(selectedEntry.value) || missingWord.value,
 )
 
 const searchSuggestions = computed(() => {
@@ -111,6 +115,22 @@ const scrollToResults = async () => {
     window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)),
   )
   resultsPanel.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+const proposeWord = async () => {
+  const slug = slugify(store.query)
+  if (!slug) return
+  await router.push({ name: 'word', params: { slug } })
+  await scrollToResults()
+}
+
+const submitSearch = () => {
+  if (store.query.trim() && filteredEntries.value.length === 0) {
+    proposeWord()
+    return
+  }
+
+  scrollToResults()
 }
 
 const updateQuery = (value) => {
@@ -186,16 +206,16 @@ const selectRandom = () => {
           :suggestions="searchSuggestions"
           @update:model-value="updateQuery"
           @select="selectSearchSuggestion"
-          @submit="scrollToResults"
+          @submit="submitSearch"
         />
       </div>
       <div class="hero-alphabet">
         <p class="eyebrow">Или начните с буквы</p>
-      <AlphabetFilter
-        :letters="alphabet"
-        :active-letter="activeAlphabetLetter"
-        @select="selectLetter"
-      />
+        <AlphabetFilter
+          :letters="alphabet"
+          :active-letter="activeAlphabetLetter"
+          @select="selectLetter"
+        />
         <p class="collection-count">
           <strong>{{ dictionaryStats.total }}</strong> слов в коллекции
         </p>
@@ -206,7 +226,7 @@ const selectRandom = () => {
       v-if="showResultArea"
       ref="resultsPanel"
       class="dictionary-results container"
-      :class="{ 'detail-only': selectedEntry && !showResults }"
+      :class="{ 'detail-only': (selectedEntry || missingWord) && !showResults }"
       aria-label="Результаты словаря"
     >
       <WordList
@@ -215,8 +235,10 @@ const selectRandom = () => {
         :selected-slug="selectedEntry?.slug"
         :result-count="filteredEntries.length"
         :can-show-more="visibleEntries.length < filteredEntries.length"
+        :proposed-word="store.query"
         @select="selectEntry"
         @show-more="store.showMore"
+        @propose="proposeWord"
         @reset="resetResults"
       />
       <WordDetail
@@ -224,6 +246,11 @@ const selectRandom = () => {
         :entry="selectedEntry"
         @random="selectRandom"
         @select-related="selectRelated"
+      />
+      <MissingWord
+        v-else-if="missingWord"
+        :word="requestedWord"
+        @reset="resetResults"
       />
     </section>
   </main>

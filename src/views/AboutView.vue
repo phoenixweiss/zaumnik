@@ -51,7 +51,11 @@ import { APP_NAME } from '@/constants'
               rel="noreferrer"
               >GitHub</a
             >
-            или личный сайт — ссылка есть в подвале.
+            или
+            <a
+              href="mailto:phoenixweiss@ya.ru?subject=%5B%D0%97%D0%B0%D1%83%D0%BC%D0%BD%D0%B8%D0%BA%D1%8A%5D%20%D0%9F%D1%80%D0%B5%D0%B4%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5%20%D0%BF%D0%BE%20%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D1%83"
+              >по электронной почте</a
+            >. Ссылка на личный сайт есть в подвале.
           </p>
         </section>
       </article>

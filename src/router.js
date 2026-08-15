@@ -11,7 +11,11 @@ const router = createRouter({
     { path: '/about', name: 'about', component: AboutView },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
-  scrollBehavior() {
+  scrollBehavior(to) {
+    if (to.name === 'word') {
+      return { el: '.dictionary-results', top: 16 }
+    }
+
     return { top: 0 }
   },
 })

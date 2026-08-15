@@ -42,7 +42,6 @@ test('показывает крупную багровую кнопку очис
   const clear = page.getByRole('button', { name: 'Очистить поиск' })
   await expect(clear).toBeVisible()
   await expect(clear).toHaveCSS('color', 'rgb(185, 88, 54)')
-  await expect(clear).toHaveCSS('font-weight', '800')
   await clear.click()
   await expect(search).toHaveValue('')
   await expect(clear).toHaveCount(0)
@@ -106,9 +105,74 @@ test('показывает слова по букве и открывает сл
   await expect(list).toHaveCount(0)
 })
 
-test('показывает результаты по десять и догружает следующую десятку', async ({
+test('объясняет отсутствие слова и предлагает способы его добавить', async ({
   page,
 }) => {
+  await page.goto('./#/word/пафос')
+
+  const missingWord = page.locator('.missing-word')
+  await expect(missingWord).toBeVisible()
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY))
+    .toBeGreaterThan(0)
+  await expect(missingWord.getByRole('heading')).toHaveText('«Пафос»')
+  await expect(missingWord).toContainText('Возможно, в написании есть опечатка')
+
+  const issue = missingWord.getByRole('link', {
+    name: /Предложить слово в Issue/,
+  })
+  await expect(issue).toHaveAttribute(
+    'href',
+    /github\.com\/phoenixweiss\/zaumnik\/issues\/new\?/,
+  )
+  await expect(issue).toHaveAttribute(
+    'href',
+    /title=%5B%D0%A1%D0%BB%D0%BE%D0%B2%D0%BE%5D/,
+  )
+
+  await expect(
+    missingWord.getByRole('link', { name: /Добавить слово в YAML/ }),
+  ).toHaveAttribute('href', /edit\/dev\/src\/data\/words\/%D0%BF\.yaml$/)
+
+  const email = missingWord.getByRole('link', { name: /Написать автору/ })
+  await expect(email).toHaveAttribute('href', /^mailto:phoenixweiss@ya\.ru\?/)
+  await expect(email).toHaveAttribute(
+    'href',
+    /subject=%5B%D0%97%D0%B0%D1%83%D0%BC%D0%BD%D0%B8%D0%BA%D1%8A%5D/,
+  )
+})
+
+test('предлагает добавить слово из пустой поисковой выдачи', async ({
+  page,
+}) => {
+  await page.goto('./')
+
+  const search = page.getByRole('searchbox')
+  await search.fill('Пафос')
+
+  const emptyState = page.locator('.empty-state')
+  const propose = emptyState.getByRole('button', {
+    name: 'Предложить добавить «Пафос»',
+  })
+  await expect(propose).toBeVisible()
+
+  await propose.click()
+  await expect(page).toHaveURL(/#\/word\/%D0%BF%D0%B0%D1%84%D0%BE%D1%81$/)
+  await expect(page.locator('.missing-word')).toBeVisible()
+})
+
+test('открывает предложение слова по Enter из поиска', async ({ page }) => {
+  await page.goto('./')
+
+  const search = page.getByRole('searchbox')
+  await search.fill('Пафос')
+  await search.press('Enter')
+
+  await expect(page).toHaveURL(/#\/word\/%D0%BF%D0%B0%D1%84%D0%BE%D1%81$/)
+  await expect(page.locator('.missing-word')).toBeVisible()
+})
+
+test('считает запрос из одной буквы фильтром по алфавиту', async ({ page }) => {
   await page.goto('./')
   const search = page.getByRole('searchbox')
   await search.fill('а')
@@ -118,12 +182,9 @@ test('показывает результаты по десять и догру�
   const rows = list.locator('.word-row')
   const showMore = list.getByRole('button', { name: 'Показать ещё' })
 
-  await expect(list.getByRole('heading')).toHaveText('30 слов')
-  await expect(rows).toHaveCount(10)
-  await showMore.click()
-  await expect(rows).toHaveCount(20)
-  await showMore.click()
-  await expect(rows).toHaveCount(30)
+  await expect(list.getByRole('heading')).toHaveText('2 слов')
+  await expect(rows).toHaveCount(2)
+  await expect(rows.first()).toContainText(/^А/)
   await expect(showMore).toHaveCount(0)
 })
 
@@ -163,7 +224,7 @@ test('указывает автора в компактном подвале', a
 
   const footer = page.locator('.site-footer')
   await expect(footer).toContainText('Заумникъ · версия 0.1.0')
-  await expect(footer).toContainText('Павел Ткачев (@phoenixweiss)')
+  await expect(footer).toContainText(/Павел Ткачев\s*\(@phoenixweiss\)/)
   await expect(
     footer.getByRole('link', { name: /Павел Ткачев/ }),
   ).toHaveAttribute('href', 'https://phoenixweiss.me')

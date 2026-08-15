@@ -4,9 +4,10 @@ defineProps({
   selectedSlug: { type: String, default: '' },
   resultCount: { type: Number, required: true },
   canShowMore: { type: Boolean, default: false },
+  proposedWord: { type: String, default: '' },
 })
 
-defineEmits(['select', 'show-more', 'reset'])
+defineEmits(['select', 'show-more', 'reset', 'propose'])
 </script>
 
 <template>
@@ -55,10 +56,20 @@ defineEmits(['select', 'show-more', 'reset'])
     <div v-else class="empty-state">
       <span aria-hidden="true">∅</span>
       <h3>Такого слова пока нет</h3>
-      <p>Попробуйте другую формулировку или вернитесь ко всему словарю.</p>
-      <button class="text-button" type="button" @click="$emit('reset')">
-        Сбросить поиск
-      </button>
+      <p>Проверьте написание или предложите добавить его в коллекцию.</p>
+      <div class="empty-state-actions">
+        <button
+          v-if="proposedWord.trim()"
+          class="empty-state-propose"
+          type="button"
+          @click="$emit('propose')"
+        >
+          Предложить добавить «{{ proposedWord.trim() }}»
+        </button>
+        <button class="text-button" type="button" @click="$emit('reset')">
+          Сбросить поиск
+        </button>
+      </div>
     </div>
   </section>
 </template>
