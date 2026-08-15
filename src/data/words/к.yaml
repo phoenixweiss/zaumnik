@@ -24,7 +24,9 @@ words:
       - козни
       - подвох
     antonyms: []
-    relations: []
+    relations:
+      - word: Каверзный
+        type: related
   - name: Каверзный
     stress:
       - 2
@@ -35,7 +37,9 @@ words:
       - заковыристый
       - коварный
     antonyms: []
-    relations: []
+    relations:
+      - word: Каверза
+        type: related
   - name: Каденс
     stress:
       - 2
@@ -143,7 +147,9 @@ words:
     synonyms:
       - познавательный
     antonyms: []
-    relations: []
+    relations:
+      - word: Когнитивный диссонанс
+        type: related
   - name: Когнитивный диссонанс
     stress:
       - 7
@@ -154,7 +160,11 @@ words:
       найти объяснение, которое примирит противоречие.
     synonyms: []
     antonyms: []
-    relations: []
+    relations:
+      - word: Диссонанс
+        type: related
+      - word: Когнитивный
+        type: related
   - name: Коллаборация
     stress:
       - 9
@@ -257,7 +267,9 @@ words:
       - тучный
     antonyms:
       - субтильный
-    relations: []
+    relations:
+      - word: Субтильный
+        type: opposite
   - name: Корреляция
     stress:
       - 7

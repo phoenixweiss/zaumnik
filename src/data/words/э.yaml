@@ -118,7 +118,9 @@ words:
       - пояснение
       - разъяснение
     antonyms: []
-    relations: []
+    relations:
+      - word: Импликация
+        type: confused
   - name: Экспозиция
     stress:
       - 7
@@ -140,7 +142,9 @@ words:
       - вывоз
     antonyms:
       - импорт
-    relations: []
+    relations:
+      - word: Импорт
+        type: opposite
   - name: Экспроприация
     stress:
       - 10
@@ -163,7 +167,9 @@ words:
     synonyms: []
     antonyms:
       - интенсивный
-    relations: []
+    relations:
+      - word: Интенсивный
+        type: opposite
   - name: Экстраверт
     stress:
       - 8
@@ -174,7 +180,9 @@ words:
     synonyms: []
     antonyms:
       - интроверт
-    relations: []
+    relations:
+      - word: Интроверт
+        type: opposite
   - name: Экстраполяция
     stress:
       - 10
@@ -184,7 +192,9 @@ words:
       быстрее модели.
     synonyms: []
     antonyms: []
-    relations: []
+    relations:
+      - word: Интерполяция
+        type: confused
   - name: Эксцесс
     stress:
       - 5
@@ -195,7 +205,9 @@ words:
       - излишество
       - нарушение
     antonyms: []
-    relations: []
+    relations:
+      - word: Инцест
+        type: confused
   - name: Электорат
     stress:
       - 8

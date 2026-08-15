@@ -117,7 +117,9 @@ words:
       - хрупкий
     antonyms:
       - корпулентный
-    relations: []
+    relations:
+      - word: Корпулентный
+        type: opposite
   - name: Супостат
     stress:
       - 7

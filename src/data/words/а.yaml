@@ -141,7 +141,9 @@ words:
       - двусмысленный
     antonyms:
       - однозначный
-    relations: []
+    relations:
+      - word: Амфиболия
+        type: related
   - name: Амфиболия
     stress:
       - 8
@@ -153,7 +155,9 @@ words:
       - двусмысленность
     antonyms:
       - однозначность
-    relations: []
+    relations:
+      - word: Амфиболичный
+        type: related
   - name: Анахронизм
     stress:
       - 8
@@ -184,7 +188,9 @@ words:
     synonyms:
       - противник
     antonyms: []
-    relations: []
+    relations:
+      - word: Протагонист
+        type: opposite
   - name: Антология
     stress:
       - 6
@@ -227,7 +233,9 @@ words:
     synonyms: []
     antonyms:
       - априори
-    relations: []
+    relations:
+      - word: Априори
+        type: opposite
   - name: Априори
     stress:
       - 5
@@ -237,7 +245,9 @@ words:
     synonyms: []
     antonyms:
       - апостериори
-    relations: []
+    relations:
+      - word: Апостериори
+        type: opposite
   - name: Апроприация
     stress:
       - 8
@@ -307,7 +317,9 @@ words:
       - подлинность
     antonyms:
       - поддельность
-    relations: []
+    relations:
+      - word: Аутентичный
+        type: related
   - name: Аутентичный
     stress:
       - 7
@@ -319,7 +331,9 @@ words:
       - подлинный
     antonyms:
       - поддельный
-    relations: []
+    relations:
+      - word: Аутентичность
+        type: related
   - name: Аффирмации
     stress:
       - 7

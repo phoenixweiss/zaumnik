@@ -20,7 +20,9 @@ words:
       значение, а в обычной речи словом могут называть подразумеваемое следствие или скрытую связь.
     synonyms: []
     antonyms: []
-    relations: []
+    relations:
+      - word: Экспликация
+        type: confused
   - name: Импонировать
     stress:
       - 6
@@ -42,7 +44,9 @@ words:
       - ввоз
     antonyms:
       - экспорт
-    relations: []
+    relations:
+      - word: Экспорт
+        type: opposite
   - name: Импрессум
     stress:
       - 5
@@ -127,7 +131,9 @@ words:
     synonyms: []
     antonyms:
       - экстенсивный
-    relations: []
+    relations:
+      - word: Экстенсивный
+        type: opposite
   - name: Интерполяция
     stress:
       - 9
@@ -137,7 +143,9 @@ words:
       закономерность.
     synonyms: []
     antonyms: []
-    relations: []
+    relations:
+      - word: Экстраполяция
+        type: confused
   - name: Интроверт
     stress:
       - 7
@@ -148,7 +156,9 @@ words:
     synonyms: []
     antonyms:
       - экстраверт
-    relations: []
+    relations:
+      - word: Экстраверт
+        type: opposite
   - name: Интроспекция
     stress:
       - 8
@@ -182,7 +192,9 @@ words:
     synonyms:
       - кровосмешение
     antonyms: []
-    relations: []
+    relations:
+      - word: Эксцесс
+        type: confused
   - name: Инцидент
     stress:
       - 6
@@ -194,7 +206,9 @@ words:
       - происшествие
       - случай
     antonyms: []
-    relations: []
+    relations:
+      - word: Прецедент
+        type: confused
   - name: Ипостась
     stress:
       - 6

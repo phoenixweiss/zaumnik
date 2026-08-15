@@ -83,7 +83,9 @@ words:
     antonyms:
       - гармония
       - консонанс
-    relations: []
+    relations:
+      - word: Когнитивный диссонанс
+        type: related
   - name: Дифирамб
     stress:
       - 6

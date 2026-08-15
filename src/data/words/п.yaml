@@ -211,7 +211,9 @@ words:
       - пример
       - случай
     antonyms: []
-    relations: []
+    relations:
+      - word: Инцидент
+        type: confused
   - name: Променад
     stress:
       - 7
@@ -246,7 +248,9 @@ words:
       - главный герой
       - действующее лицо
     antonyms: []
-    relations: []
+    relations:
+      - word: Антагонист
+        type: opposite
   - name: Протеже
     stress:
       - 7

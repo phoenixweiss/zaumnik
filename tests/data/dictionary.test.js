@@ -71,7 +71,6 @@ test('импортирован полный набор названий из и�
 test('все слова получили определения', () => {
   for (const word of words) {
     assert.ok(word.definition)
-    assert.deepEqual(word.relations, [])
   }
 })
 
@@ -100,6 +99,33 @@ test('подтверждённые антонимы заполнены без с
         antonym.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е'),
         name,
         `${word.name}: антоним не должен повторять само слово`,
+      )
+    }
+  }
+})
+
+test('смысловые связи ведут к словам и работают в обе стороны', () => {
+  assert.equal(
+    words.reduce((total, word) => total + word.relations.length, 0),
+    30,
+  )
+
+  const normalize = (value) =>
+    value.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е')
+  const byName = new Map(words.map((word) => [normalize(word.name), word]))
+
+  for (const word of words) {
+    for (const relation of word.relations) {
+      const target = byName.get(normalize(relation.word))
+      assert.ok(target, `${word.name}: не найдено связанное слово`)
+
+      const reciprocal = target.relations.find(
+        (candidate) => normalize(candidate.word) === normalize(word.name),
+      )
+      assert.equal(
+        reciprocal?.type,
+        relation.type,
+        `${word.name} ↔ ${target.name}: связь должна быть взаимной`,
       )
     }
   }
