@@ -22,7 +22,7 @@ test('команда добавляет слово и сохраняет пол�
       'scripts/add-word.js',
       'Абулия',
       '--stress',
-      '4',
+      '5',
       '--definition',
       'Состояние ослабленной воли.',
       '--synonyms',
@@ -38,7 +38,7 @@ test('команда добавляет слово и сохраняет пол�
   )
   assert.deepEqual(section.words[0], {
     name: 'Абулия',
-    stress: [4],
+    stress: [5],
     definition: 'Состояние ослабленной воли.',
     synonyms: ['безволие'],
     antonyms: ['воля'],
@@ -93,6 +93,40 @@ test('пересборка сортирует слова и удаляет ду�
   assert.deepEqual(section.words[1].synonyms, ['каприз'])
 })
 
+test('пересборка отклоняет ударение на согласной', () => {
+  const wordsDirectory = temporaryWords()
+  const environment = {
+    ...process.env,
+    ZAUMNIK_WORDS_DIRECTORY: wordsDirectory,
+  }
+
+  writeFileSync(
+    resolve(wordsDirectory, 'б.yaml'),
+    yaml.dump({
+      letter: 'Б',
+      words: [
+        {
+          name: 'Блажь',
+          stress: [2],
+          definition: '',
+          synonyms: [],
+          antonyms: [],
+          relations: [],
+        },
+      ],
+    }),
+  )
+
+  assert.throws(
+    () =>
+      execFileSync(process.execPath, ['scripts/rebuild-words.js'], {
+        cwd: resolve('.'),
+        env: environment,
+      }),
+    /позиция ударения 2 должна указывать на гласную/,
+  )
+})
+
 test('безопасный импорт берёт два слова на букву и два определения', () => {
   const fixtureDirectory = temporaryWords()
   const wordsDirectory = temporaryWords()
@@ -131,6 +165,124 @@ test('безопасный импорт берёт два слова на бук
   assert.deepEqual(
     imported.filter((word) => word.definition).map((word) => word.name),
     ['Аберрация', 'Бифуркация'],
+  )
+})
+
+test('импорт полного списка названий очищает редакционные поля', () => {
+  const fixtureDirectory = temporaryWords()
+  const wordsDirectory = temporaryWords()
+  const sourcePath = resolve(fixtureDirectory, 'source.md')
+  const environment = {
+    ...process.env,
+    ZAUMNIK_WORDS_DIRECTORY: wordsDirectory,
+    ZAUMNIK_SOURCE_PATH: sourcePath,
+  }
+
+  writeFileSync(
+    sourcePath,
+    [
+      '## А',
+      '**Аберра́ция** — Первое определение.',
+      'Абстиненция',
+      '',
+      '## Б',
+      '**Бифуркация** — Второе определение.',
+    ].join('\n'),
+  )
+
+  execFileSync(
+    process.execPath,
+    ['scripts/import-markdown.js', '--names-only'],
+    { cwd: resolve('.'), env: environment },
+  )
+
+  const imported = ['а.yaml', 'б.yaml'].flatMap(
+    (file) =>
+      yaml.load(readFileSync(resolve(wordsDirectory, file), 'utf8')).words,
+  )
+
+  assert.deepEqual(
+    imported.map((word) => word.name),
+    ['Аберрация', 'Абстиненция', 'Бифуркация'],
+  )
+  for (const word of imported) {
+    assert.deepEqual(word.stress, [])
+    assert.equal(word.definition, '')
+    assert.deepEqual(word.synonyms, [])
+    assert.deepEqual(word.antonyms, [])
+    assert.deepEqual(word.relations, [])
+  }
+})
+
+test('импорт исправляет согласованные написания слов', () => {
+  const fixtureDirectory = temporaryWords()
+  const wordsDirectory = temporaryWords()
+  const sourcePath = resolve(fixtureDirectory, 'source.md')
+  const environment = {
+    ...process.env,
+    ZAUMNIK_WORDS_DIRECTORY: wordsDirectory,
+    ZAUMNIK_SOURCE_PATH: sourcePath,
+  }
+
+  writeFileSync(
+    sourcePath,
+    [
+      '## А',
+      'Аль-денте',
+      'Аффирмации',
+      '## Д',
+      'Диферамб',
+      '## И',
+      'Инсенуация',
+      '## К',
+      'Каденс',
+      'Конгламерат',
+      'Коньюктура',
+      '## Л',
+      'Лаг, временной лаг',
+      '## П',
+      'Паттернализм',
+      'Препон',
+      'Предтечи',
+      '## Р',
+      'Рекеровка',
+      '## Ц',
+      'Цуцванг',
+    ].join('\n'),
+  )
+
+  execFileSync(
+    process.execPath,
+    ['scripts/import-markdown.js', '--names-only'],
+    { cwd: resolve('.'), env: environment },
+  )
+
+  const imported = readdirSync(wordsDirectory)
+    .filter((file) => file.endsWith('.yaml'))
+    .flatMap(
+      (file) =>
+        yaml.load(readFileSync(resolve(wordsDirectory, file), 'utf8')).words,
+    )
+
+  assert.deepEqual(
+    imported
+      .map((word) => word.name)
+      .sort((left, right) => left.localeCompare(right, 'ru')),
+    [
+      'Альденте',
+      'Аффирмация',
+      'Дифирамб',
+      'Инсинуация',
+      'Каданс',
+      'Конгломерат',
+      'Конъюнктура',
+      'Лаг',
+      'Патернализм',
+      'Предтеча',
+      'Препона',
+      'Рокировка',
+      'Цугцванг',
+    ].sort((left, right) => left.localeCompare(right, 'ru')),
   )
 })
 

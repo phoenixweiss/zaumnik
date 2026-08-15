@@ -17,7 +17,7 @@ const words = sections.flatMap((section) =>
   section.words.map((word) => ({ ...word, letter: section.letter })),
 )
 
-const expectedWords = [
+const expectedSeedWords = [
   'Аберрация',
   'Абстиненция',
   'Блажь',
@@ -32,7 +32,7 @@ const expectedWords = [
   'Импликация',
   'Кабала',
   'Каверза',
-  'Лаг, временной лаг',
+  'Лаг',
   'Либерализм',
   'Манифестация',
   'Манчкин',
@@ -51,28 +51,117 @@ const expectedWords = [
   'Фарс',
   'Фарт',
   'Хтонь',
-  'Цуцванг',
+  'Цугцванг',
   'Штрейкбрехер',
   'Штрибан',
   'Эгида',
   'Эгрегор',
 ]
 
-test('начальный набор взят из первых строк буквенных разделов исходника', () => {
+test('импортирован полный набор названий из исходной подборки', () => {
   assert.equal(sections.length, 20)
-  assert.equal(words.length, 38)
-  assert.deepEqual(
-    words
-      .map((word) => word.name)
-      .sort((left, right) => left.localeCompare(right, 'ru')),
-    expectedWords.sort((left, right) => left.localeCompare(right, 'ru')),
-  )
+  assert.equal(words.length, 218)
+
+  const names = new Set(words.map((word) => word.name))
+  for (const expectedWord of expectedSeedWords) {
+    assert.ok(names.has(expectedWord), `Не найдено слово «${expectedWord}»`)
+  }
 })
 
-test('определения оставлены только у двух первых готовых статей', () => {
+test('согласованные заголовки хранятся в единой форме', () => {
+  const names = new Set(words.map((word) => word.name))
+
+  for (const name of [
+    'Аффирмация',
+    'Предтеча',
+    'Лаг',
+    'Каданс',
+    'Эквилибриум',
+    'Экивоки',
+  ]) {
+    assert.ok(names.has(name), `Не найдено слово «${name}»`)
+  }
+
+  for (const legacyName of [
+    'Аффирмации',
+    'Предтечи',
+    'Лаг, временной лаг',
+    'Каденс',
+  ]) {
+    assert.ok(
+      !names.has(legacyName),
+      `Остался старый заголовок «${legacyName}»`,
+    )
+  }
+})
+
+test('все слова получили определения', () => {
+  for (const word of words) {
+    assert.ok(word.definition)
+  }
+})
+
+test('подтверждённые синонимы заполнены без самоссылок', () => {
+  assert.equal(words.filter((word) => word.synonyms.length).length, 152)
+
+  for (const word of words) {
+    const name = word.name.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е')
+    for (const synonym of word.synonyms) {
+      assert.notEqual(
+        synonym.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е'),
+        name,
+        `${word.name}: синоним не должен повторять само слово`,
+      )
+    }
+  }
+})
+
+test('подтверждённые антонимы заполнены без самоссылок', () => {
+  assert.equal(words.filter((word) => word.antonyms.length).length, 29)
+
+  for (const word of words) {
+    const name = word.name.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е')
+    for (const antonym of word.antonyms) {
+      assert.notEqual(
+        antonym.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е'),
+        name,
+        `${word.name}: антоним не должен повторять само слово`,
+      )
+    }
+  }
+})
+
+test('смысловые связи ведут к словам и работают в обе стороны', () => {
+  assert.equal(
+    words.reduce((total, word) => total + word.relations.length, 0),
+    30,
+  )
+
+  const normalize = (value) =>
+    value.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е')
+  const byName = new Map(words.map((word) => [normalize(word.name), word]))
+
+  for (const word of words) {
+    for (const relation of word.relations) {
+      const target = byName.get(normalize(relation.word))
+      assert.ok(target, `${word.name}: не найдено связанное слово`)
+
+      const reciprocal = target.relations.find(
+        (candidate) => normalize(candidate.word) === normalize(word.name),
+      )
+      assert.equal(
+        reciprocal?.type,
+        relation.type,
+        `${word.name} ↔ ${target.name}: связь должна быть взаимной`,
+      )
+    }
+  }
+})
+
+test('для каждого слова указано ударение', () => {
   assert.deepEqual(
-    words.filter((word) => word.definition).map((word) => word.name),
-    ['Аберрация', 'Бифуркация'],
+    words.filter((word) => word.stress.length === 0),
+    [],
   )
 })
 
@@ -102,5 +191,44 @@ test('адрес слова сохраняет русскую букву й', ()
 })
 
 test('ударения нумеруются только по буквам', () => {
-  assert.equal(formatWord('Лаг, временной лаг', [6]), 'Лаг, вре́менной лаг')
+  assert.equal(
+    formatWord('Когнитивный диссонанс', [7, 18]),
+    'Когнити́вный диссона́нс',
+  )
+})
+
+test('однословные статьи показывают выбранный вариант ударения', () => {
+  const wordsByName = new Map(words.map((word) => [word.name, word]))
+  const expectedForms = new Map([
+    ['Дискурс', 'Ди́скурс'],
+    ['Катарсис', 'Ката́рсис'],
+    ['Эгрегор', 'Эгре́гор'],
+    ['Экзальтированный', 'Экзальти́рованный'],
+    ['Эмпатия', 'Эмпа́тия'],
+  ])
+
+  for (const [name, expected] of expectedForms) {
+    const word = wordsByName.get(name)
+    assert.equal(formatWord(word.name, word.stress), expected)
+  }
+})
+
+test('буква ё не получает лишний знак ударения', () => {
+  assert.equal(formatWord('Флёр', [3]), 'Флёр')
+})
+
+test('позиции ударения указывают только на гласные', () => {
+  for (const word of words) {
+    const letters = [...word.name].filter((character) =>
+      /[А-ЯЁа-яё]/.test(character),
+    )
+
+    for (const position of word.stress) {
+      assert.match(
+        letters[position - 1],
+        /[АЕЁИОУЫЭЮЯаеёиоуыэюя]/,
+        `${word.name}: ударение ${position} должно приходиться на гласную`,
+      )
+    }
+  }
 })

@@ -7,11 +7,12 @@ import { parseDictionary } from '../src/data/parseDictionary.js'
 const mode = process.argv[2]
 const usage = `
 Импорт исходного Markdown:
-  yarn words:import -- --seed  # первые два слова на букву, два определения
-  yarn words:import -- --all   # вся исходная подборка
+  yarn words:import -- --seed       # первые два слова на букву, два определения
+  yarn words:import -- --all        # вся исходная подборка со старыми данными
+  yarn words:import -- --names-only # вся исходная подборка, только названия
 `.trim()
 
-if (!['--seed', '--all'].includes(mode)) {
+if (!['--seed', '--all', '--names-only'].includes(mode)) {
   console.error(usage)
   process.exit(1)
 }
@@ -30,6 +31,24 @@ const typeByLabel = {
   'Часто путают': 'confused',
   Связанное: 'related',
 }
+
+const nameOverrides = new Map([
+  ['Аль-денте', 'Альденте'],
+  ['Аффирмации', 'Аффирмация'],
+  ['Диферамб', 'Дифирамб'],
+  ['Инсенуация', 'Инсинуация'],
+  ['Каденс', 'Каданс'],
+  ['Конгламерат', 'Конгломерат'],
+  ['Коньюктура', 'Конъюнктура'],
+  ['Лаг, временной лаг', 'Лаг'],
+  ['Паттернализм', 'Патернализм'],
+  ['Предтечи', 'Предтеча'],
+  ['Препон', 'Препона'],
+  ['Рекеровка', 'Рокировка'],
+  ['Цуцванг', 'Цугцванг'],
+])
+
+const normalizeName = (name) => nameOverrides.get(name) ?? name
 
 const extractStress = (sourceName) => {
   let position = 0
@@ -50,7 +69,7 @@ const extractStress = (sourceName) => {
 
 const parsedEntries = parseDictionary(readFileSync(sourcePath, 'utf8'))
 const selectedEntries =
-  mode === '--all'
+  mode !== '--seed'
     ? parsedEntries
     : parsedEntries.filter((entry) => {
         const earlierInSection = parsedEntries
@@ -61,24 +80,28 @@ const selectedEntries =
 
 const selectedNames = new Set(selectedEntries.map((entry) => entry.name))
 let definitionsLeft = mode === '--seed' ? 2 : Number.POSITIVE_INFINITY
+const namesOnly = mode === '--names-only'
 
 const words = selectedEntries.map((entry) => {
   const stressedName = extractStress(entry.name)
-  const keepDefinition = entry.hasDefinition && definitionsLeft > 0
+  const keepDefinition =
+    !namesOnly && entry.hasDefinition && definitionsLeft > 0
   if (keepDefinition) definitionsLeft -= 1
 
   return {
-    name: stressedName.name,
-    stress: stressedName.stress,
+    name: normalizeName(stressedName.name),
+    stress: namesOnly ? [] : stressedName.stress,
     definition: keepDefinition ? entry.definition : '',
     synonyms: [],
     antonyms: [],
-    relations: entry.relations
-      .filter((relation) => selectedNames.has(relation.name))
-      .map((relation) => ({
-        word: extractStress(relation.name).name,
-        type: typeByLabel[relation.label],
-      })),
+    relations: namesOnly
+      ? []
+      : entry.relations
+          .filter((relation) => selectedNames.has(relation.name))
+          .map((relation) => ({
+            word: normalizeName(extractStress(relation.name).name),
+            type: typeByLabel[relation.label],
+          })),
   }
 })
 

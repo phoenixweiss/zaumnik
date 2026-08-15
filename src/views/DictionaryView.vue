@@ -3,10 +3,12 @@ import { computed, nextTick, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import AlphabetFilter from '@/components/AlphabetFilter.vue'
+import MissingWord from '@/components/MissingWord.vue'
 import SearchField from '@/components/SearchField.vue'
 import WordDetail from '@/components/WordDetail.vue'
 import WordList from '@/components/WordList.vue'
 import { alphabet, dictionary, dictionaryStats } from '@/data/dictionary'
+import { slugify } from '@/data/word'
 import { useDictionaryStore } from '@/stores/dictionary'
 
 const store = useDictionaryStore()
@@ -15,9 +17,10 @@ const router = useRouter()
 const resultsPanel = ref(null)
 
 const readyEntries = dictionary.filter((entry) => entry.hasDefinition)
+const exampleEntries = readyEntries.length ? readyEntries : dictionary
 const exampleEntry =
-  readyEntries[Math.floor(Math.random() * readyEntries.length)]
-const exampleName = `${exampleEntry.displayName[0].toLocaleLowerCase('ru-RU')}${exampleEntry.displayName.slice(1)}`
+  exampleEntries[Math.floor(Math.random() * exampleEntries.length)]
+const exampleName = `${exampleEntry.name[0].toLocaleLowerCase('ru-RU')}${exampleEntry.name.slice(1)}`
 const searchPlaceholder = `Например, ${exampleName}`
 
 const normalizeSearch = (value) =>
@@ -32,11 +35,41 @@ const normalizeSearch = (value) =>
 const selectedEntry = computed(() =>
   dictionary.find((entry) => entry.slug === route.params.slug),
 )
+const missingWord = computed(
+  () => route.name === 'word' && !selectedEntry.value,
+)
+const requestedWord = computed(() => String(route.params.slug ?? ''))
+
+const activeAlphabetLetter = computed(() => {
+  const search = normalizeSearch(store.query)
+  const normalized = search.toLocaleUpperCase('ru-RU')
+
+  if (search.length === 1 && alphabet.includes(normalized)) {
+    const hasMatches = dictionary.some((entry) => entry.letter === normalized)
+    if (hasMatches) return normalized
+  }
+
+  return store.letter
+})
 
 const filteredEntries = computed(() => {
   const search = normalizeSearch(store.query)
 
   if (search) {
+    if (search.length === 1 && activeAlphabetLetter.value) {
+      return dictionary.filter(
+        (entry) => entry.letter === activeAlphabetLetter.value,
+      )
+    }
+
+    const nameMatches = dictionary.filter((entry) =>
+      normalizeSearch(entry.name).includes(search),
+    )
+
+    if (search.length <= 2 || nameMatches.length) {
+      return nameMatches
+    }
+
     return dictionary.filter((entry) =>
       [entry.name, entry.definition, ...entry.synonyms, ...entry.antonyms].some(
         (value) => normalizeSearch(value).includes(search),
@@ -55,10 +88,10 @@ const visibleEntries = computed(() =>
   filteredEntries.value.slice(0, store.visibleCount),
 )
 const showResults = computed(
-  () => Boolean(store.query.trim() || store.letter) && !selectedEntry.value,
+  () => Boolean(store.query.trim() || store.letter) && route.name !== 'word',
 )
 const showResultArea = computed(
-  () => showResults.value || Boolean(selectedEntry.value),
+  () => showResults.value || Boolean(selectedEntry.value) || missingWord.value,
 )
 
 const searchSuggestions = computed(() => {
@@ -74,7 +107,6 @@ const searchSuggestions = computed(() => {
       return left.name.localeCompare(right.name, 'ru-RU')
     })
     .slice(0, 7)
-    .map((entry) => entry.displayName)
 })
 
 const scrollToResults = async () => {
@@ -83,6 +115,22 @@ const scrollToResults = async () => {
     window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)),
   )
   resultsPanel.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+const proposeWord = async () => {
+  const slug = slugify(store.query)
+  if (!slug) return
+  await router.push({ name: 'word', params: { slug } })
+  await scrollToResults()
+}
+
+const submitSearch = () => {
+  if (store.query.trim() && filteredEntries.value.length === 0) {
+    proposeWord()
+    return
+  }
+
+  scrollToResults()
 }
 
 const updateQuery = (value) => {
@@ -96,12 +144,8 @@ const selectEntry = async (entry) => {
 }
 
 const selectSearchSuggestion = (suggestion) => {
-  const entry = dictionary.find(
-    (item) => normalizeSearch(item.displayName) === normalizeSearch(suggestion),
-  )
-  if (!entry) return
-  store.setQuery(entry.displayName)
-  selectEntry(entry)
+  store.setQuery(suggestion.name)
+  selectEntry(suggestion)
 }
 
 const selectLetter = async (letter) => {
@@ -123,7 +167,13 @@ const selectRelated = (slug) => {
 }
 
 const selectRandom = () => {
-  const candidates = dictionary.filter((entry) => entry.hasDefinition)
+  const readyCandidates = dictionary.filter(
+    (entry) => entry.hasDefinition && entry.slug !== selectedEntry.value?.slug,
+  )
+  const candidates = readyCandidates.length
+    ? readyCandidates
+    : dictionary.filter((entry) => entry.slug !== selectedEntry.value?.slug)
+  if (!candidates.length) return
   const entry = candidates[Math.floor(Math.random() * candidates.length)]
   store.reset()
   selectEntry(entry)
@@ -158,14 +208,14 @@ const selectRandom = () => {
           :suggestions="searchSuggestions"
           @update:model-value="updateQuery"
           @select="selectSearchSuggestion"
-          @submit="scrollToResults"
+          @submit="submitSearch"
         />
       </div>
       <div class="hero-alphabet">
         <p class="eyebrow">Или начните с буквы</p>
         <AlphabetFilter
           :letters="alphabet"
-          :active-letter="store.letter"
+          :active-letter="activeAlphabetLetter"
           @select="selectLetter"
         />
         <p class="collection-count">
@@ -178,7 +228,7 @@ const selectRandom = () => {
       v-if="showResultArea"
       ref="resultsPanel"
       class="dictionary-results container"
-      :class="{ 'detail-only': selectedEntry && !showResults }"
+      :class="{ 'detail-only': (selectedEntry || missingWord) && !showResults }"
       aria-label="Результаты словаря"
     >
       <WordList
@@ -187,8 +237,10 @@ const selectRandom = () => {
         :selected-slug="selectedEntry?.slug"
         :result-count="filteredEntries.length"
         :can-show-more="visibleEntries.length < filteredEntries.length"
+        :proposed-word="store.query"
         @select="selectEntry"
         @show-more="store.showMore"
+        @propose="proposeWord"
         @reset="resetResults"
       />
       <WordDetail
@@ -196,6 +248,11 @@ const selectRandom = () => {
         :entry="selectedEntry"
         @random="selectRandom"
         @select-related="selectRelated"
+      />
+      <MissingWord
+        v-else-if="missingWord"
+        :word="requestedWord"
+        @reset="resetResults"
       />
     </section>
   </main>

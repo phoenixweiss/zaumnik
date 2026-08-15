@@ -1,6 +1,8 @@
 <script setup>
 import { computed, nextTick, ref, watch } from 'vue'
 
+import WordName from './WordName.vue'
+
 const props = defineProps({
   modelValue: { type: String, default: '' },
   placeholder: { type: String, default: 'Найти слово' },
@@ -103,7 +105,7 @@ const clearSearch = async () => {
       aria-label="Очистить поиск"
       @click="clearSearch"
     >
-      ×
+      <span class="search-clear-icon" aria-hidden="true"></span>
     </button>
     <ul
       v-if="showSuggestions"
@@ -115,14 +117,14 @@ const clearSearch = async () => {
       <li
         v-for="(suggestion, index) in suggestions"
         :id="`search-suggestion-${index}`"
-        :key="suggestion"
+        :key="suggestion.slug"
         role="option"
         :aria-selected="index === activeIndex"
         :class="{ active: index === activeIndex }"
         @mousedown.prevent
         @click="selectSuggestion(suggestion)"
       >
-        {{ suggestion }}
+        <WordName :name="suggestion.name" :stress="suggestion.stress" />
       </li>
     </ul>
   </div>

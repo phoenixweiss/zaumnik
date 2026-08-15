@@ -90,13 +90,18 @@ export const writeWords = (sourceWords) => {
     if (!/^[А-ЯЁ]$/.test(letter))
       throw new Error(`Не удалось определить букву слова: ${word.name}`)
 
-    const letterCount = [...word.name].filter((character) =>
+    const letters = [...word.name].filter((character) =>
       /[А-ЯЁа-яё]/.test(character),
-    ).length
+    )
     for (const position of word.stress) {
-      if (position < 1 || position > letterCount) {
+      if (position < 1 || position > letters.length) {
         throw new Error(
           `${word.name}: позиция ударения ${position} выходит за пределы слова`,
+        )
+      }
+      if (!/[АЕЁИОУЫЭЮЯаеёиоуыэюя]/.test(letters[position - 1])) {
+        throw new Error(
+          `${word.name}: позиция ударения ${position} должна указывать на гласную`,
         )
       }
     }

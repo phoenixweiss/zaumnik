@@ -19,7 +19,9 @@ export const formatWord = (name, stress = []) => {
   return [...name]
     .map((character) => {
       if (/[А-ЯЁа-яё]/.test(character)) letterPosition += 1
-      return positions.has(letterPosition) ? `${character}\u0301` : character
+      return positions.has(letterPosition) && !/[Ёё]/.test(character)
+        ? `${character}\u0301`
+        : character
     })
     .join('')
 }

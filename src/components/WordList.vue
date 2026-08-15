@@ -1,12 +1,25 @@
 <script setup>
+import WordName from './WordName.vue'
+
+const wordForm = (count) => {
+  const mod100 = count % 100
+  const mod10 = count % 10
+
+  if (mod100 >= 11 && mod100 <= 14) return 'слов'
+  if (mod10 === 1) return 'слово'
+  if (mod10 >= 2 && mod10 <= 4) return 'слова'
+  return 'слов'
+}
+
 defineProps({
   entries: { type: Array, required: true },
   selectedSlug: { type: String, default: '' },
   resultCount: { type: Number, required: true },
   canShowMore: { type: Boolean, default: false },
+  proposedWord: { type: String, default: '' },
 })
 
-defineEmits(['select', 'show-more', 'reset'])
+defineEmits(['select', 'show-more', 'reset', 'propose'])
 </script>
 
 <template>
@@ -15,7 +28,7 @@ defineEmits(['select', 'show-more', 'reset'])
       <div>
         <p class="eyebrow">Коллекция</p>
         <h2 id="word-list-title">
-          {{ resultCount }} {{ resultCount === 1 ? 'слово' : 'слов' }}
+          {{ resultCount }} {{ wordForm(resultCount) }}
         </h2>
       </div>
       <span class="list-key"><i class="ready-dot"></i> с определением</span>
@@ -31,7 +44,9 @@ defineEmits(['select', 'show-more', 'reset'])
         @click="$emit('select', entry)"
       >
         <span>
-          <strong>{{ entry.displayName }}</strong>
+          <strong
+            ><WordName :name="entry.name" :stress="entry.stress"
+          /></strong>
           <small>{{
             entry.hasDefinition ? entry.definition : 'Определение в работе'
           }}</small>
@@ -55,10 +70,20 @@ defineEmits(['select', 'show-more', 'reset'])
     <div v-else class="empty-state">
       <span aria-hidden="true">∅</span>
       <h3>Такого слова пока нет</h3>
-      <p>Попробуйте другую формулировку или вернитесь ко всему словарю.</p>
-      <button class="text-button" type="button" @click="$emit('reset')">
-        Сбросить поиск
-      </button>
+      <p>Проверьте написание или предложите добавить его в коллекцию.</p>
+      <div class="empty-state-actions">
+        <button
+          v-if="proposedWord.trim()"
+          class="empty-state-propose"
+          type="button"
+          @click="$emit('propose')"
+        >
+          Предложить добавить «{{ proposedWord.trim() }}»
+        </button>
+        <button class="text-button" type="button" @click="$emit('reset')">
+          Сбросить поиск
+        </button>
+      </div>
     </div>
   </section>
 </template>
