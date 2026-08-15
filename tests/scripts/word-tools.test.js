@@ -180,6 +180,66 @@ test('импорт полного списка названий очищает �
   }
 })
 
+test('импорт исправляет согласованные написания слов', () => {
+  const fixtureDirectory = temporaryWords()
+  const wordsDirectory = temporaryWords()
+  const sourcePath = resolve(fixtureDirectory, 'source.md')
+  const environment = {
+    ...process.env,
+    ZAUMNIK_WORDS_DIRECTORY: wordsDirectory,
+    ZAUMNIK_SOURCE_PATH: sourcePath,
+  }
+
+  writeFileSync(
+    sourcePath,
+    [
+      '## А',
+      'Аль-денте',
+      '## Д',
+      'Диферамб',
+      '## И',
+      'Инсенуация',
+      '## К',
+      'Конгламерат',
+      'Коньюктура',
+      '## П',
+      'Паттернализм',
+      'Препон',
+      '## Р',
+      'Рекеровка',
+    ].join('\n'),
+  )
+
+  execFileSync(
+    process.execPath,
+    ['scripts/import-markdown.js', '--names-only'],
+    { cwd: resolve('.'), env: environment },
+  )
+
+  const imported = readdirSync(wordsDirectory)
+    .filter((file) => file.endsWith('.yaml'))
+    .flatMap(
+      (file) =>
+        yaml.load(readFileSync(resolve(wordsDirectory, file), 'utf8')).words,
+    )
+
+  assert.deepEqual(
+    imported
+      .map((word) => word.name)
+      .sort((left, right) => left.localeCompare(right, 'ru')),
+    [
+      'Альденте',
+      'Дифирамб',
+      'Инсинуация',
+      'Конгломерат',
+      'Конъюнктура',
+      'Патернализм',
+      'Препона',
+      'Рокировка',
+    ].sort((left, right) => left.localeCompare(right, 'ru')),
+  )
+})
+
 test('импорт без явного режима не изменяет словарные файлы', () => {
   const wordsDirectory = temporaryWords()
   const environment = {

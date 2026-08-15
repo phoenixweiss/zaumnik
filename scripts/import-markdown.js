@@ -32,6 +32,19 @@ const typeByLabel = {
   Связанное: 'related',
 }
 
+const nameOverrides = new Map([
+  ['Аль-денте', 'Альденте'],
+  ['Диферамб', 'Дифирамб'],
+  ['Инсенуация', 'Инсинуация'],
+  ['Конгламерат', 'Конгломерат'],
+  ['Коньюктура', 'Конъюнктура'],
+  ['Паттернализм', 'Патернализм'],
+  ['Препон', 'Препона'],
+  ['Рекеровка', 'Рокировка'],
+])
+
+const normalizeName = (name) => nameOverrides.get(name) ?? name
+
 const extractStress = (sourceName) => {
   let position = 0
   const stress = []
@@ -71,7 +84,7 @@ const words = selectedEntries.map((entry) => {
   if (keepDefinition) definitionsLeft -= 1
 
   return {
-    name: stressedName.name,
+    name: normalizeName(stressedName.name),
     stress: namesOnly ? [] : stressedName.stress,
     definition: keepDefinition ? entry.definition : '',
     synonyms: [],
@@ -81,7 +94,7 @@ const words = selectedEntries.map((entry) => {
       : entry.relations
           .filter((relation) => selectedNames.has(relation.name))
           .map((relation) => ({
-            word: extractStress(relation.name).name,
+            word: normalizeName(extractStress(relation.name).name),
             type: typeByLabel[relation.label],
           })),
   }
