@@ -75,13 +75,19 @@ test('согласованные заголовки хранятся в един
     'Аффирмация',
     'Предтеча',
     'Лаг',
+    'Каданс',
     'Эквилибриум',
     'Экивоки',
   ]) {
     assert.ok(names.has(name), `Не найдено слово «${name}»`)
   }
 
-  for (const legacyName of ['Аффирмации', 'Предтечи', 'Лаг, временной лаг']) {
+  for (const legacyName of [
+    'Аффирмации',
+    'Предтечи',
+    'Лаг, временной лаг',
+    'Каденс',
+  ]) {
     assert.ok(
       !names.has(legacyName),
       `Остался старый заголовок «${legacyName}»`,
@@ -189,6 +195,22 @@ test('ударения нумеруются только по буквам', () 
     formatWord('Когнитивный диссонанс', [7, 18]),
     'Когнити́вный диссона́нс',
   )
+})
+
+test('однословные статьи показывают выбранный вариант ударения', () => {
+  const wordsByName = new Map(words.map((word) => [word.name, word]))
+  const expectedForms = new Map([
+    ['Дискурс', 'Ди́скурс'],
+    ['Катарсис', 'Ката́рсис'],
+    ['Эгрегор', 'Эгре́гор'],
+    ['Экзальтированный', 'Экзальти́рованный'],
+    ['Эмпатия', 'Эмпа́тия'],
+  ])
+
+  for (const [name, expected] of expectedForms) {
+    const word = wordsByName.get(name)
+    assert.equal(formatWord(word.name, word.stress), expected)
+  }
 })
 
 test('буква ё не получает лишний знак ударения', () => {
