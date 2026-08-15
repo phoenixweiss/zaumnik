@@ -690,6 +690,36 @@ input:focus-visible {
   margin: 0;
 }
 
+.about-note {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-top: 1rem;
+  padding-top: 1.6rem;
+  border-top: 2px solid var(--line);
+}
+
+.about-note h2 {
+  margin: 0;
+  color: var(--forest);
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.about-note a {
+  color: var(--rust);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.about-note a:hover,
+.about-note a:focus-visible {
+  color: var(--forest);
+}
+
 .progress-ring {
   display: grid;
   flex: 0 0 auto;
