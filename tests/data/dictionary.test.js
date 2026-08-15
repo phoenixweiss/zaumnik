@@ -68,14 +68,20 @@ test('импортирован полный набор названий из и�
   }
 })
 
-test('все слова получили определения без преждевременного заполнения остальных полей', () => {
+test('все слова получили определения без преждевременного заполнения смысловых полей', () => {
   for (const word of words) {
     assert.ok(word.definition)
-    assert.deepEqual(word.stress, [])
     assert.deepEqual(word.synonyms, [])
     assert.deepEqual(word.antonyms, [])
     assert.deepEqual(word.relations, [])
   }
+})
+
+test('для каждого слова указано ударение', () => {
+  assert.deepEqual(
+    words.filter((word) => word.stress.length === 0),
+    [],
+  )
 })
 
 test('каждая запись содержит расширяемые словарные поля', () => {
@@ -104,5 +110,28 @@ test('адрес слова сохраняет русскую букву й', ()
 })
 
 test('ударения нумеруются только по буквам', () => {
-  assert.equal(formatWord('Лаг, временной лаг', [6]), 'Лаг, вре́менной лаг')
+  assert.equal(
+    formatWord('Лаг, временной лаг', [2, 11, 14]),
+    'Ла́г, временно́й ла́г',
+  )
+})
+
+test('буква ё не получает лишний знак ударения', () => {
+  assert.equal(formatWord('Флёр', [3]), 'Флёр')
+})
+
+test('позиции ударения указывают только на гласные', () => {
+  for (const word of words) {
+    const letters = [...word.name].filter((character) =>
+      /[А-ЯЁа-яё]/.test(character),
+    )
+
+    for (const position of word.stress) {
+      assert.match(
+        letters[position - 1],
+        /[АЕЁИОУЫЭЮЯаеёиоуыэюя]/,
+        `${word.name}: ударение ${position} должно приходиться на гласную`,
+      )
+    }
+  }
 })

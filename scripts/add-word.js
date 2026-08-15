@@ -7,7 +7,7 @@ const name = args.shift()?.trim()
 
 const usage = `
 Добавление слова:
-  yarn word:add -- "Слово" --stress "2" --definition "Определение"
+  yarn word:add -- "Слово" --stress "3" --definition "Определение"
 
 Списки и связи (значения можно перечислять через запятую):
   --synonyms "Синоним 1, Синоним 2"

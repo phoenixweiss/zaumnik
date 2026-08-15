@@ -22,7 +22,7 @@ test('команда добавляет слово и сохраняет пол�
       'scripts/add-word.js',
       'Абулия',
       '--stress',
-      '4',
+      '5',
       '--definition',
       'Состояние ослабленной воли.',
       '--synonyms',
@@ -38,7 +38,7 @@ test('команда добавляет слово и сохраняет пол�
   )
   assert.deepEqual(section.words[0], {
     name: 'Абулия',
-    stress: [4],
+    stress: [5],
     definition: 'Состояние ослабленной воли.',
     synonyms: ['безволие'],
     antonyms: ['воля'],
@@ -91,6 +91,40 @@ test('пересборка сортирует слова и удаляет ду�
     ['Бифуркация', 'Блажь'],
   )
   assert.deepEqual(section.words[1].synonyms, ['каприз'])
+})
+
+test('пересборка отклоняет ударение на согласной', () => {
+  const wordsDirectory = temporaryWords()
+  const environment = {
+    ...process.env,
+    ZAUMNIK_WORDS_DIRECTORY: wordsDirectory,
+  }
+
+  writeFileSync(
+    resolve(wordsDirectory, 'б.yaml'),
+    yaml.dump({
+      letter: 'Б',
+      words: [
+        {
+          name: 'Блажь',
+          stress: [2],
+          definition: '',
+          synonyms: [],
+          antonyms: [],
+          relations: [],
+        },
+      ],
+    }),
+  )
+
+  assert.throws(
+    () =>
+      execFileSync(process.execPath, ['scripts/rebuild-words.js'], {
+        cwd: resolve('.'),
+        env: environment,
+      }),
+    /позиция ударения 2 должна указывать на гласную/,
+  )
 })
 
 test('безопасный импорт берёт два слова на букву и два определения', () => {
