@@ -21,8 +21,9 @@ const currentYear = new Date().getFullYear()
       <small class="footer-credit">
         &copy; {{ currentYear }}
         <a href="https://phoenixweiss.me" target="_blank" rel="noreferrer">
-          Павел Ткачев <em>(@phoenixweiss)</em></a
-        >.
+          Павел Ткачев</a
+        >
+        <span class="footer-handle">(@phoenixweiss)</span>.
       </small>
     </div>
   </footer>

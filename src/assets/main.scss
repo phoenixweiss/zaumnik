@@ -1041,7 +1041,7 @@ input:focus-visible {
 .site-footer .footer-inner {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  min-height: 2.8rem;
+  min-height: 2.35rem;
   padding: 0 2rem;
   column-gap: 1rem;
   align-items: center;
@@ -1072,6 +1072,12 @@ input:focus-visible {
 .footer-credit {
   justify-self: end;
   text-align: right;
+}
+
+.footer-handle {
+  color: var(--ink-muted);
+  margin-left: 0.35rem;
+  font-size: 0.68rem;
 }
 
 .site-footer a {
