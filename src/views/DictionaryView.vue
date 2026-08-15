@@ -33,13 +33,27 @@ const selectedEntry = computed(() =>
   dictionary.find((entry) => entry.slug === route.params.slug),
 )
 
+const activeAlphabetLetter = computed(() => {
+  const search = normalizeSearch(store.query)
+  const normalized = search.toLocaleUpperCase('ru-RU')
+
+  if (search.length === 1 && alphabet.includes(normalized)) {
+    const hasMatches = dictionary.some(
+      (entry) => entry.letter === normalized,
+    )
+    if (hasMatches) return normalized
+  }
+
+  return store.letter
+})
+
 const filteredEntries = computed(() => {
   const search = normalizeSearch(store.query)
 
   if (search) {
-    if (search.length === 1 && alphabet.includes(search.toLocaleUpperCase('ru-RU'))) {
+    if (search.length === 1 && activeAlphabetLetter.value) {
       return dictionary.filter(
-        (entry) => entry.letter.toLocaleLowerCase('ru-RU') === search,
+        (entry) => entry.letter === activeAlphabetLetter.value,
       )
     }
 
@@ -169,11 +183,11 @@ const selectRandom = () => {
       </div>
       <div class="hero-alphabet">
         <p class="eyebrow">Или начните с буквы</p>
-        <AlphabetFilter
-          :letters="alphabet"
-          :active-letter="store.letter"
-          @select="selectLetter"
-        />
+      <AlphabetFilter
+        :letters="alphabet"
+        :active-letter="activeAlphabetLetter"
+        @select="selectLetter"
+      />
         <p class="collection-count">
           <strong>{{ dictionaryStats.total }}</strong> слов в коллекции
         </p>
