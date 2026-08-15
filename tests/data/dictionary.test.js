@@ -68,12 +68,26 @@ test('импортирован полный набор названий из и�
   }
 })
 
-test('все слова получили определения без преждевременного заполнения смысловых полей', () => {
+test('все слова получили определения', () => {
   for (const word of words) {
     assert.ok(word.definition)
-    assert.deepEqual(word.synonyms, [])
     assert.deepEqual(word.antonyms, [])
     assert.deepEqual(word.relations, [])
+  }
+})
+
+test('подтверждённые синонимы заполнены без самоссылок', () => {
+  assert.equal(words.filter((word) => word.synonyms.length).length, 152)
+
+  for (const word of words) {
+    const name = word.name.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е')
+    for (const synonym of word.synonyms) {
+      assert.notEqual(
+        synonym.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е'),
+        name,
+        `${word.name}: синоним не должен повторять само слово`,
+      )
+    }
   }
 })
 
