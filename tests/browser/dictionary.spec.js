@@ -120,6 +120,24 @@ test('кнопка другого слова не возвращает теку�
   )
 })
 
+test('делит словарную карточку на основную и справочную колонки', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await page.goto('./#/word/диссонанс')
+
+  const [mainBox, asideBox, relationsBox] = await Promise.all([
+    page.locator('.detail-main').boundingBox(),
+    page.getByRole('complementary', { name: 'Связи слова' }).boundingBox(),
+    page.getByRole('region', { name: 'Рядом по смыслу' }).boundingBox(),
+  ])
+
+  expect(mainBox.x + mainBox.width).toBeLessThan(asideBox.x)
+  expect(mainBox.width / asideBox.width).toBeGreaterThan(1.8)
+  expect(mainBox.width / asideBox.width).toBeLessThan(2.2)
+  expect(relationsBox.width).toBeLessThanOrEqual(asideBox.width)
+})
+
 test('показывает связи и не расширяет карточку на узком экране', async ({
   page,
 }) => {
@@ -131,6 +149,36 @@ test('показывает связи и не расширяет карточк�
   await expect(relations.getByRole('button')).toContainText(
     'Когнитивный диссонанс',
   )
+
+  const mainBox = await page.locator('.detail-main').boundingBox()
+  const asideBox = await page
+    .getByRole('complementary', { name: 'Связи слова' })
+    .boundingBox()
+  expect(asideBox.y).toBeGreaterThan(mainBox.y)
+  expect(Math.abs(asideBox.x - mainBox.x)).toBeLessThanOrEqual(1)
+
+  const viewportWidth = await page.evaluate(() => ({
+    inner: window.innerWidth,
+    content: document.documentElement.scrollWidth,
+  }))
+  expect(viewportWidth.content).toBeLessThanOrEqual(viewportWidth.inner)
+
+  const synonyms = page.getByRole('region', { name: 'Синонимы' })
+  const antonyms = page.getByRole('region', { name: 'Антонимы' })
+  const [synonymBox, antonymBox, footerBox] = await Promise.all([
+    synonyms.boundingBox(),
+    antonyms.boundingBox(),
+    page.locator('.detail-footer').boundingBox(),
+  ])
+
+  expect(synonymBox.y + synonymBox.height).toBeLessThan(antonymBox.y)
+  expect(
+    footerBox.y -
+      Math.max(
+        synonymBox.y + synonymBox.height,
+        antonymBox.y + antonymBox.height,
+      ),
+  ).toBeGreaterThanOrEqual(36)
 
   const layout = await page.evaluate(() => {
     const detail = document

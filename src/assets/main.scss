@@ -1037,19 +1037,37 @@ input:focus-visible {
   box-shadow: none;
 }
 
-.word-detail > .detail-heading,
+.detail-main > .detail-heading,
 .word-detail > .detail-footer {
   margin: 0;
   background: transparent;
   color: inherit;
 }
 
-.word-detail > .detail-heading {
+.detail-main > .detail-heading {
   padding: 0;
 }
 
 .word-detail > .detail-footer {
+  margin-top: 2.4rem;
   padding: 1.2rem 0 0;
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
+  gap: clamp(2rem, 4vw, 4rem);
+  align-items: start;
+}
+
+.detail-main,
+.detail-aside {
+  min-width: 0;
+}
+
+.detail-aside {
+  padding-left: clamp(1.25rem, 2.5vw, 2.25rem);
+  border-left: 1px solid var(--line);
 }
 
 .detail-heading {
@@ -1105,7 +1123,7 @@ input:focus-visible {
 }
 
 .definition {
-  margin: 3rem 0;
+  margin: 1.5rem 0 0;
 }
 
 .definition p {
@@ -1139,11 +1157,22 @@ input:focus-visible {
 }
 
 .relations {
-  margin-top: 3rem;
+  margin-top: 0;
 }
 
-.synonyms {
+.word-pairs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
   margin-top: 2rem;
+}
+
+.detail-aside > .word-pairs:first-child {
+  margin-top: 0;
+}
+
+.word-pairs > .synonyms {
+  min-width: 0;
 }
 
 .synonyms ul {
@@ -1156,12 +1185,14 @@ input:focus-visible {
 }
 
 .synonyms li {
+  max-width: 100%;
   padding: 0.3rem 0.65rem;
   border: 1px solid var(--line);
   border-radius: 2rem;
   color: var(--ink-muted);
   font-family: var(--serif);
   font-size: 0.76rem;
+  overflow-wrap: anywhere;
 }
 
 .relation-card {
@@ -1190,10 +1221,10 @@ input:focus-visible {
 
 .relation-card strong {
   font-family: var(--serif);
-  font-size: 1.12rem;
+  font-size: 1rem;
 }
 
-.relation-card span {
+.relation-card > span {
   grid-row: 1 / 3;
   grid-column: 2;
   color: var(--rust);
@@ -1522,7 +1553,27 @@ input:focus-visible {
   }
 
   .definition {
-    margin: 2rem 0;
+    margin: 1rem 0 0;
+  }
+
+  .detail-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  .detail-aside {
+    padding: 2rem 0 0;
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .synonyms ul {
+    gap: 0.35rem;
+  }
+
+  .synonyms li {
+    padding: 0.25rem 0.45rem;
+    font-size: 0.68rem;
   }
 }
 
