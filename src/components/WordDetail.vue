@@ -1,12 +1,58 @@
 <script setup>
+import { onBeforeUnmount, ref, watch } from 'vue'
+
 import WordName from './WordName.vue'
 
-defineProps({
+const props = defineProps({
   entry: { type: Object, required: true },
   isDaily: { type: Boolean, default: false },
 })
 
 defineEmits(['random', 'select-related'])
+
+const copyState = ref('idle')
+let resetCopyStateTimer
+
+const copyText = async (text) => {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text)
+    return
+  }
+
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  textarea.readOnly = true
+  textarea.style.position = 'fixed'
+  textarea.style.opacity = '0'
+  document.body.append(textarea)
+  textarea.select()
+  const copied = document.execCommand('copy')
+  textarea.remove()
+  if (!copied) throw new Error('copy failed')
+}
+
+const copyWordLink = async () => {
+  try {
+    await copyText(window.location.href)
+    copyState.value = 'copied'
+    window.clearTimeout(resetCopyStateTimer)
+    resetCopyStateTimer = window.setTimeout(() => {
+      copyState.value = 'idle'
+    }, 2500)
+  } catch {
+    copyState.value = 'error'
+  }
+}
+
+watch(
+  () => props.entry.slug,
+  () => {
+    copyState.value = 'idle'
+    window.clearTimeout(resetCopyStateTimer)
+  },
+)
+
+onBeforeUnmount(() => window.clearTimeout(resetCopyStateTimer))
 </script>
 
 <template>
@@ -97,10 +143,34 @@ defineEmits(['random', 'select-related'])
     </div>
 
     <footer class="detail-footer">
-      <button class="random-button" type="button" @click="$emit('random')">
-        <span aria-hidden="true">↻</span>
-        Другое слово
-      </button>
+      <div class="detail-actions">
+        <button class="random-button" type="button" @click="$emit('random')">
+          <span aria-hidden="true">↻</span>
+          Другое слово
+        </button>
+        <button
+          class="copy-link-button"
+          type="button"
+          :aria-label="
+            copyState === 'copied'
+              ? `Ссылка на слово «${entry.name}» скопирована`
+              : `Скопировать ссылку на слово «${entry.name}»`
+          "
+          @click="copyWordLink"
+        >
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="8" y="8" width="11" height="11" rx="1" />
+            <path d="M16 8V5H5v11h3" />
+          </svg>
+          {{
+            copyState === 'copied'
+              ? 'Ссылка скопирована'
+              : copyState === 'error'
+                ? 'Попробовать ещё'
+                : 'Скопировать ссылку'
+          }}
+        </button>
+      </div>
       <span>{{
         entry.hasDefinition ? 'Определение заполнено' : 'Нужно дополнить'
       }}</span>

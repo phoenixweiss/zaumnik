@@ -1305,20 +1305,50 @@ input:focus-visible {
   justify-content: space-between;
 }
 
-.random-button {
+.detail-actions {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.random-button,
+.copy-link-button {
+  display: inline-flex;
   width: auto;
   margin: 0;
   padding: 0.55rem 0.85rem;
   border: 1px solid var(--forest);
   border-radius: 0;
-  background: var(--forest);
-  color: white;
   font-size: 0.68rem;
+  align-items: center;
+  gap: 0.35rem;
 }
 
-.random-button:hover {
+.random-button {
+  background: var(--forest);
+  color: white;
+}
+
+.copy-link-button {
+  background: transparent;
+  color: var(--forest);
+}
+
+.copy-link-button svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.random-button:hover,
+.copy-link-button:hover {
   background: var(--rust);
   border-color: var(--rust);
+  color: white;
 }
 
 .detail-footer > span {

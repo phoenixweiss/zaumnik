@@ -145,6 +145,33 @@ test('кнопка другого слова не возвращает теку�
   )
 })
 
+test('копирует прямую ссылку на словарную статью', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.__copiedWordLink = ''
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {
+        writeText: async (value) => {
+          window.__copiedWordLink = value
+        },
+      },
+    })
+  })
+  await page.goto('./#/word/дежавю')
+
+  const copy = page.locator('.copy-link-button')
+  await expect(copy).toHaveAttribute(
+    'aria-label',
+    'Скопировать ссылку на слово «Дежавю»',
+  )
+  await copy.click()
+
+  await expect(copy).toHaveText(/Ссылка скопирована/)
+  await expect
+    .poll(() => page.evaluate(() => window.__copiedWordLink))
+    .toBe(page.url())
+})
+
 test('делит словарную карточку на основную и справочную колонки', async ({
   page,
 }) => {
