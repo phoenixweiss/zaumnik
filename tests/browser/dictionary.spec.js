@@ -71,6 +71,22 @@ test('предлагает подходящие слова и поддержив
   )
 })
 
+test('закрывает автоподсказки после отправки поиска по Enter', async ({
+  page,
+}) => {
+  await page.goto('./')
+
+  const search = page.getByRole('searchbox')
+  await search.fill('а')
+  const suggestions = page.getByRole('listbox', { name: 'Подходящие слова' })
+  await expect(suggestions).toBeVisible()
+
+  await search.press('Enter')
+
+  await expect(suggestions).toHaveCount(0)
+  await expect(page.locator('.word-list-panel')).toBeVisible()
+})
+
 test('ищет не только по названию, но и по тексту определения', async ({
   page,
 }) => {

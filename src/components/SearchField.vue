@@ -57,7 +57,10 @@ const handleKeydown = (event) => {
     event.preventDefault()
     const suggestion = props.suggestions[activeIndex.value]
     if (suggestion) selectSuggestion(suggestion)
-    else emit('submit')
+    else {
+      isOpen.value = false
+      emit('submit')
+    }
   } else if (event.key === 'Escape') {
     isOpen.value = false
   }
