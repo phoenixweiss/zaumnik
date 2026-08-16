@@ -59,8 +59,8 @@ const expectedSeedWords = [
 ]
 
 test('импортирован полный набор названий из исходной подборки', () => {
-  assert.equal(sections.length, 20)
-  assert.equal(words.length, 218)
+  assert.equal(sections.length, 21)
+  assert.equal(words.length, 220)
 
   const names = new Set(words.map((word) => word.name))
   for (const expectedWord of expectedSeedWords) {
@@ -102,7 +102,7 @@ test('все слова получили определения', () => {
 })
 
 test('подтверждённые синонимы заполнены без самоссылок', () => {
-  assert.equal(words.filter((word) => word.synonyms.length).length, 152)
+  assert.equal(words.filter((word) => word.synonyms.length).length, 153)
 
   for (const word of words) {
     const name = word.name.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е')
@@ -134,7 +134,7 @@ test('подтверждённые антонимы заполнены без с
 test('смысловые связи ведут к словам и работают в обе стороны', () => {
   assert.equal(
     words.reduce((total, word) => total + word.relations.length, 0),
-    30,
+    32,
   )
 
   const normalize = (value) =>

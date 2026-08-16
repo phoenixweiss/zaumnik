@@ -80,7 +80,9 @@ words:
     synonyms:
       - позёр
     antonyms: []
-    relations: []
+    relations:
+      - word: Кичиться
+        type: related
   - name: Стигматизация
     stress:
       - 10
