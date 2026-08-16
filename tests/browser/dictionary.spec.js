@@ -1,4 +1,11 @@
+import { readFileSync } from 'node:fs'
+
 import { expect, test } from '@playwright/test'
+
+const projectVersion = readFileSync(
+  new URL('../../VERSION', import.meta.url),
+  'utf8',
+).trim()
 
 test('показывает фирменное написание, большой поиск и алфавит', async ({
   page,
@@ -500,7 +507,7 @@ test('указывает автора в компактном подвале', a
   await page.goto('./')
 
   const footer = page.locator('.site-footer')
-  await expect(footer).toContainText('Заумникъ · версия 0.1.0')
+  await expect(footer).toContainText(`Заумникъ · версия ${projectVersion}`)
   await expect(footer).toContainText(/Павел Ткачев\s*\(@phoenixweiss\)/)
   await expect(
     footer.getByRole('link', { name: /Павел Ткачев/ }),
