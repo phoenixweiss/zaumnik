@@ -18,6 +18,14 @@ test('показывает фирменное написание, большой
     'href',
     '/zaumnik/favicon.svg',
   )
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    'content',
+    'https://phoenixweiss.github.io/zaumnik/social-card.png',
+  )
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
+    'content',
+    'summary_large_image',
+  )
   await expect(page.getByRole('searchbox')).toHaveAttribute(
     'placeholder',
     /^Например, .+/,

@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Заумникъ — словарь любопытных слов</title>
+  <desc id="description">Слова, которые интересно узнать.</desc>
+
+  <defs>
+    <style>
+      @font-face {
+        font-family: 'Merriweather Variable';
+        font-style: normal;
+        font-weight: 300 900;
+        src: url('./social-card-font.woff2') format('woff2-variations');
+      }
+
+      @font-face {
+        font-family: 'Merriweather Variable';
+        font-style: italic;
+        font-weight: 300 900;
+        src: url('./social-card-font-italic.woff2') format('woff2-variations');
+      }
+    </style>
+    <path
+      id="frame"
+      d="M160.8 28.5Q180 20 199.2 28.5Q218.3 37 239.2 39.2Q260 41.4 272.3 58.4Q284.7 75.3 301.6 87.7Q318.6 100 320.8 120.8Q323 141.7 331.5 160.8Q340 180 331.5 199.2Q323 218.3 320.8 239.2Q318.6 260 301.6 272.3Q284.7 284.7 272.3 301.6Q260 318.6 239.2 320.8Q218.3 323 199.2 331.5Q180 340 160.8 331.5Q141.7 323 120.8 320.8Q100 318.6 87.7 301.6Q75.3 284.7 58.4 272.3Q41.4 260 39.2 239.2Q37 218.3 28.5 199.2Q20 180 28.5 160.8Q37 141.7 39.2 120.8Q41.4 100 58.4 87.7Q75.3 75.3 87.7 58.4Q100 41.4 120.8 39.2Q141.7 37 160.8 28.5Z"
+    />
+    <g id="petal">
+      <ellipse cx="180" cy="88" rx="38" ry="68" />
+      <ellipse cx="180" cy="89" rx="34" ry="65" />
+      <ellipse cx="180" cy="90" rx="30" ry="62" />
+      <ellipse cx="180" cy="91" rx="26" ry="59" />
+      <ellipse cx="180" cy="92" rx="22" ry="56" />
+    </g>
+    <g id="petals">
+      <use href="#petal" />
+      <use href="#petal" transform="rotate(30 180 180)" />
+      <use href="#petal" transform="rotate(60 180 180)" />
+      <use href="#petal" transform="rotate(90 180 180)" />
+      <use href="#petal" transform="rotate(120 180 180)" />
+      <use href="#petal" transform="rotate(150 180 180)" />
+      <use href="#petal" transform="rotate(180 180 180)" />
+      <use href="#petal" transform="rotate(210 180 180)" />
+      <use href="#petal" transform="rotate(240 180 180)" />
+      <use href="#petal" transform="rotate(270 180 180)" />
+      <use href="#petal" transform="rotate(300 180 180)" />
+      <use href="#petal" transform="rotate(330 180 180)" />
+    </g>
+  </defs>
+
+  <rect width="1200" height="630" fill="#f4f0e6" />
+  <rect x="42" y="42" width="1116" height="546" fill="none" stroke="#1c2825" stroke-opacity=".22" stroke-width="2" />
+
+  <g transform="translate(720 80) scale(1.18)" fill="none" stroke="#163f36" stroke-width="1.1">
+    <g stroke-opacity=".12">
+      <use href="#petals" />
+    </g>
+    <g stroke-opacity=".16">
+      <use href="#frame" />
+      <use href="#frame" transform="translate(180 180) scale(.92) translate(-180 -180)" />
+      <use href="#frame" transform="translate(180 180) scale(.76) translate(-180 -180)" />
+      <use href="#frame" transform="translate(180 180) scale(.62) translate(-180 -180)" />
+    </g>
+  </g>
+
+  <text x="84" y="112" fill="#163f36" font-family="'Merriweather Variable', serif" font-size="66" font-weight="700">Заумникъ</text>
+  <line x1="472" y1="70" x2="472" y2="116" stroke="#1c2825" stroke-opacity=".42" stroke-width="2" />
+  <text x="498" y="103" fill="#65706a" font-family="Arial, sans-serif" font-size="24">словарь любопытных слов</text>
+  <line x1="84" y1="146" x2="1116" y2="146" stroke="#1c2825" stroke-width="2" />
+
+  <text x="84" y="218" fill="#b95836" font-family="Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="5">РЕДКИЕ · СЛОЖНЫЕ · НЕОБЫЧНЫЕ</text>
+  <text x="84" y="322" fill="#163f36" font-family="'Merriweather Variable', serif" font-size="78" font-weight="600">Слова, которые</text>
+  <text x="84" y="408" fill="#163f36" font-family="'Merriweather Variable', serif" font-size="78" font-weight="600">интересно узнать.</text>
+
+  <text x="84" y="494" fill="#65706a" font-family="Arial, sans-serif" font-size="25">Интерактивный словарь редких, сложных</text>
+  <text x="84" y="529" fill="#65706a" font-family="Arial, sans-serif" font-size="25">и необычных слов русского языка.</text>
+
+  <text x="936" y="432" fill="#b95836" font-family="'Merriweather Variable', serif" font-size="230" font-style="italic" font-weight="700" text-anchor="middle">Ъ</text>
+</svg>
