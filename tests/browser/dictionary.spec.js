@@ -22,6 +22,7 @@ test('показывает фирменное написание, большой
     'placeholder',
     /^Например, .+/,
   )
+  await expect(page.getByRole('button', { name: 'Найти' })).toBeVisible()
   await expect(page.getByText('слово или смысл', { exact: true })).toHaveCount(
     0,
   )
@@ -208,6 +209,42 @@ test('ставит знак ударения над самой гласной', 
   await expect(word.locator('.stress-mark')).toHaveText('ю')
 })
 
+test('не поднимает ударение в поисковой подсказке слишком высоко', async ({
+  page,
+}) => {
+  await page.goto('./')
+
+  await page.getByRole('searchbox').fill('деж')
+  const stressMark = page
+    .getByRole('listbox', { name: 'Подходящие слова' })
+    .locator('.stress-mark')
+
+  await expect(stressMark).toHaveText('ю')
+  const accentTop = await stressMark.evaluate((element) =>
+    Number.parseFloat(getComputedStyle(element, '::after').top),
+  )
+  expect(accentTop).toBeGreaterThanOrEqual(0)
+})
+
+test('убирает подзаголовок статьи и выравнивает слово с буквой', async ({
+  page,
+}) => {
+  await page.goto('./#/word/дежавю')
+
+  const detail = page.locator('.word-detail')
+  await expect(
+    detail.getByText('Словарная статья', { exact: true }),
+  ).toHaveCount(0)
+
+  const [letterBox, headingBox] = await Promise.all([
+    detail.locator('.word-letter').boundingBox(),
+    detail.getByRole('heading').boundingBox(),
+  ])
+  const letterCenter = letterBox.y + letterBox.height / 2
+  const headingCenter = headingBox.y + headingBox.height / 2
+  expect(Math.abs(letterCenter - headingCenter)).toBeLessThanOrEqual(3)
+})
+
 test('объясняет отсутствие слова с известной буквой и предлагает его добавить', async ({
   page,
 }) => {
@@ -342,11 +379,69 @@ test('оставляет только общее число слов и не п�
 }) => {
   await page.goto('./')
 
-  await expect(page.locator('.collection-count')).toHaveText(
-    '218 слов в коллекции',
-  )
+  await expect(
+    page.getByRole('button', { name: 'Показать все слова коллекции' }),
+  ).toContainText('218 слов в коллекции')
+  await expect(
+    page.getByRole('button', { name: 'Показать все слова коллекции' }),
+  ).toContainText('Показать все')
   await expect(page.locator('.dictionary-summary')).toHaveCount(0)
   await expect(page.locator('.word-list-panel, .word-detail')).toHaveCount(0)
+})
+
+test('открывает весь словарь и подгружает слова по двадцать', async ({
+  page,
+}) => {
+  await page.goto('./')
+
+  await page
+    .getByRole('button', { name: 'Показать все слова коллекции' })
+    .click()
+
+  await expect(page).toHaveURL(/#\/words$/)
+  const list = page.locator('.word-list-panel')
+  const rows = list.locator('.word-row')
+  await expect(list.getByText('Весь словарь', { exact: true })).toBeVisible()
+  await expect(list.getByRole('heading')).toHaveText('218 слов')
+  await expect(rows).toHaveCount(20)
+
+  await list.getByRole('button', { name: 'Показать ещё 20' }).click()
+  await expect(rows).toHaveCount(40)
+})
+
+test('не включает hover строк словаря на сенсорном экране', async ({
+  browser,
+}, testInfo) => {
+  const context = await browser.newContext({
+    baseURL: testInfo.project.use.baseURL,
+    hasTouch: true,
+    viewport: { width: 390, height: 844 },
+  })
+  const page = await context.newPage()
+  await page.goto('./#/words')
+
+  const firstRow = page.locator('.word-row').first()
+  await expect(firstRow).toBeVisible()
+  await firstRow.hover()
+  await expect(firstRow).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
+
+  await context.close()
+})
+
+test('кнопка поиска открывает те же результаты, что и Enter', async ({
+  page,
+}) => {
+  await page.goto('./')
+
+  await page.getByRole('searchbox').fill('аберрация')
+  await page.getByRole('button', { name: 'Найти' }).click()
+
+  const list = page.locator('.word-list-panel')
+  await expect(list).toBeVisible()
+  await expect(list.locator('.word-row')).toHaveCount(1)
+  await expect(list).toContainText('Аберрация')
+  await expect(page.locator('.dictionary-summary')).toHaveCount(0)
+  await expect(page.locator('.word-detail')).toHaveCount(0)
 })
 
 test('указывает автора в компактном подвале', async ({ page }) => {

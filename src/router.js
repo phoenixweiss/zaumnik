@@ -7,6 +7,7 @@ const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', name: 'dictionary', component: DictionaryView },
+    { path: '/words', name: 'words', component: DictionaryView },
     { path: '/word/:slug', name: 'word', component: DictionaryView },
     { path: '/about', name: 'about', component: AboutView },
     { path: '/:pathMatch(.*)*', redirect: '/' },

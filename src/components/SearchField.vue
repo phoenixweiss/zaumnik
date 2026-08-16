@@ -107,6 +107,9 @@ const clearSearch = async () => {
     >
       <span class="search-clear-icon" aria-hidden="true"></span>
     </button>
+    <button class="search-submit" type="button" @click="$emit('submit')">
+      Найти
+    </button>
     <ul
       v-if="showSuggestions"
       id="search-suggestions"

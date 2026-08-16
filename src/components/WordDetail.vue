@@ -16,9 +16,7 @@ defineEmits(['random', 'select-related'])
         <header class="detail-heading">
           <span class="word-letter" aria-hidden="true">{{ entry.letter }}</span>
           <div>
-            <p class="eyebrow">
-              {{ isDaily ? 'Слово дня' : 'Словарная статья' }}
-            </p>
+            <p v-if="isDaily" class="eyebrow">Слово дня</p>
             <h2><WordName :name="entry.name" :stress="entry.stress" /></h2>
           </div>
         </header>

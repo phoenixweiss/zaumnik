@@ -25,3 +25,14 @@ test('новый поиск возвращает размер первой по�
 
   assert.equal(store.visibleCount, 10)
 })
+
+test('полный список начинается с двадцати слов и расширяется по двадцать', () => {
+  setActivePinia(createPinia())
+  const store = useDictionaryStore()
+
+  store.showAll()
+  assert.equal(store.visibleCount, 20)
+
+  store.showMore(20)
+  assert.equal(store.visibleCount, 40)
+})

@@ -22,8 +22,13 @@ export const useDictionaryStore = defineStore('dictionary', {
       this.letter = ''
       this.visibleCount = 10
     },
-    showMore() {
-      this.visibleCount += 10
+    showAll() {
+      this.query = ''
+      this.letter = ''
+      this.visibleCount = 20
+    },
+    showMore(amount = 10) {
+      this.visibleCount += amount
     },
   },
 })

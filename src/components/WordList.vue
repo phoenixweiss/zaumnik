@@ -16,7 +16,9 @@ defineProps({
   selectedSlug: { type: String, default: '' },
   resultCount: { type: Number, required: true },
   canShowMore: { type: Boolean, default: false },
+  showMoreCount: { type: Number, default: 10 },
   proposedWord: { type: String, default: '' },
+  eyebrow: { type: String, default: 'Коллекция' },
 })
 
 defineEmits(['select', 'show-more', 'reset', 'propose'])
@@ -26,7 +28,7 @@ defineEmits(['select', 'show-more', 'reset', 'propose'])
   <section class="word-list-panel" aria-labelledby="word-list-title">
     <header class="panel-heading">
       <div>
-        <p class="eyebrow">Коллекция</p>
+        <p class="eyebrow">{{ eyebrow }}</p>
         <h2 id="word-list-title">
           {{ resultCount }} {{ wordForm(resultCount) }}
         </h2>
@@ -63,7 +65,7 @@ defineEmits(['select', 'show-more', 'reset', 'propose'])
         type="button"
         @click="$emit('show-more')"
       >
-        Показать ещё
+        Показать ещё {{ Math.min(showMoreCount, resultCount - entries.length) }}
       </button>
     </div>
 

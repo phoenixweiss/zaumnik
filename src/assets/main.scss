@@ -363,7 +363,7 @@ input:focus-visible {
 .search-field input {
   height: 4.6rem;
   margin: 0;
-  padding: 0 4.5rem 0 2.75rem;
+  padding: 0 9rem 0 2.75rem;
   border: 1px solid var(--ink);
   border-radius: 0;
   background: rgba(255, 255, 255, 0.48);
@@ -371,6 +371,10 @@ input:focus-visible {
   color: var(--ink);
   font-family: var(--serif);
   font-size: clamp(1.2rem, 2vw, 1.8rem);
+}
+
+.search-field input::placeholder {
+  color: rgba(101, 112, 106, 0.58);
 }
 
 .search-icon {
@@ -405,7 +409,7 @@ input:focus-visible {
 .search-field .search-clear {
   position: absolute;
   top: 50%;
-  right: 0.9rem;
+  right: 5.45rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -421,6 +425,31 @@ input:focus-visible {
   font-family: var(--sans);
   line-height: 1;
   transform: translateY(-50%);
+}
+
+.search-field .search-submit {
+  position: absolute;
+  top: 50%;
+  right: 0.8rem;
+  width: auto;
+  height: 2.5rem;
+  margin: 0;
+  padding: 0 0.95rem;
+  border: 1px solid var(--forest);
+  border-radius: 0;
+  background: var(--forest);
+  box-shadow: none;
+  color: var(--paper);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  transform: translateY(-50%);
+}
+
+.search-field .search-submit:hover,
+.search-field .search-submit:focus-visible {
+  border-color: var(--rust);
+  background: var(--rust);
 }
 
 .search-clear-icon {
@@ -494,6 +523,10 @@ input:focus-visible {
   color: var(--rust);
 }
 
+.search-suggestions .stress-mark::after {
+  top: 0.08em;
+}
+
 @keyframes hard-sign-swing {
   0%,
   100% {
@@ -551,16 +584,34 @@ input:focus-visible {
 }
 
 .collection-count {
-  margin: 0.7rem 0 0;
+  display: flex;
+  width: max-content;
+  margin: 0.7rem auto 0;
+  padding: 0.1rem 0.25rem;
   color: var(--ink-muted);
   font-size: 0.68rem;
   text-align: center;
+  align-items: baseline;
+  gap: 0.25rem;
 }
 
 .collection-count strong {
   color: var(--forest);
   font-family: var(--serif);
   font-size: 0.88rem;
+}
+
+.collection-count span {
+  margin-left: 0.2rem;
+  color: var(--rust);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.collection-count:hover span,
+.collection-count:focus-visible span {
+  color: var(--forest);
 }
 
 .dictionary-results {
@@ -937,10 +988,16 @@ input:focus-visible {
   max-width: calc(100% - 1.5rem);
 }
 
-.word-row:hover,
 .word-row.selected {
   padding-inline: 1rem;
   background: var(--forest-soft);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .word-row:hover {
+    padding-inline: 1rem;
+    background: var(--forest-soft);
+  }
 }
 
 .word-row strong,
@@ -1486,7 +1543,7 @@ input:focus-visible {
 
   .search-field input {
     height: 3.8rem;
-    padding-right: 4rem;
+    padding-right: 8.5rem;
     padding-left: 2.75rem;
     font-size: 1.2rem;
     box-shadow: 4px 4px 0 var(--forest);
@@ -1494,6 +1551,16 @@ input:focus-visible {
 
   .search-icon {
     left: 1.25rem;
+  }
+
+  .search-field .search-clear {
+    right: 5rem;
+  }
+
+  .search-field .search-submit {
+    right: 0.55rem;
+    height: 2.35rem;
+    padding-inline: 0.75rem;
   }
 
   .hero-alphabet {

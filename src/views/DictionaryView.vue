@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import AlphabetFilter from '@/components/AlphabetFilter.vue'
@@ -39,6 +39,9 @@ const missingWord = computed(
   () => route.name === 'word' && !selectedEntry.value,
 )
 const requestedWord = computed(() => String(route.params.slug ?? ''))
+const isFullList = computed(
+  () => route.name === 'words' && !store.query.trim() && !store.letter,
+)
 
 const activeAlphabetLetter = computed(() => {
   const search = normalizeSearch(store.query)
@@ -81,6 +84,8 @@ const filteredEntries = computed(() => {
     return dictionary.filter((entry) => entry.letter === store.letter)
   }
 
+  if (isFullList.value) return dictionary
+
   return []
 })
 
@@ -88,7 +93,9 @@ const visibleEntries = computed(() =>
   filteredEntries.value.slice(0, store.visibleCount),
 )
 const showResults = computed(
-  () => Boolean(store.query.trim() || store.letter) && route.name !== 'word',
+  () =>
+    Boolean(store.query.trim() || store.letter || isFullList.value) &&
+    route.name !== 'word',
 )
 const showResultArea = computed(
   () => showResults.value || Boolean(selectedEntry.value) || missingWord.value,
@@ -135,7 +142,7 @@ const submitSearch = () => {
 
 const updateQuery = (value) => {
   store.setQuery(value)
-  if (route.name === 'word') router.replace({ name: 'dictionary' })
+  if (route.name !== 'dictionary') router.replace({ name: 'dictionary' })
 }
 
 const selectEntry = async (entry) => {
@@ -150,8 +157,20 @@ const selectSearchSuggestion = (suggestion) => {
 
 const selectLetter = async (letter) => {
   store.setLetter(letter)
-  if (route.name === 'word') await router.replace({ name: 'dictionary' })
+  if (route.name !== 'dictionary') {
+    await router.replace({ name: 'dictionary' })
+  }
   if (store.letter) await scrollToResults()
+}
+
+const showMore = () => {
+  store.showMore(isFullList.value ? 20 : 10)
+}
+
+const openAllWords = async () => {
+  store.showAll()
+  if (route.name !== 'words') await router.push({ name: 'words' })
+  await scrollToResults()
 }
 
 const resetResults = async () => {
@@ -178,6 +197,14 @@ const selectRandom = () => {
   store.reset()
   selectEntry(entry)
 }
+
+watch(
+  () => route.name,
+  (name) => {
+    if (name === 'words') store.showAll()
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -218,9 +245,15 @@ const selectRandom = () => {
           :active-letter="activeAlphabetLetter"
           @select="selectLetter"
         />
-        <p class="collection-count">
+        <button
+          class="collection-count"
+          type="button"
+          aria-label="Показать все слова коллекции"
+          @click="openAllWords"
+        >
           <strong>{{ dictionaryStats.total }}</strong> слов в коллекции
-        </p>
+          <span>Показать все →</span>
+        </button>
       </div>
     </section>
 
@@ -237,9 +270,11 @@ const selectRandom = () => {
         :selected-slug="selectedEntry?.slug"
         :result-count="filteredEntries.length"
         :can-show-more="visibleEntries.length < filteredEntries.length"
+        :show-more-count="isFullList ? 20 : 10"
+        :eyebrow="isFullList ? 'Весь словарь' : 'Коллекция'"
         :proposed-word="store.query"
         @select="selectEntry"
-        @show-more="store.showMore"
+        @show-more="showMore"
         @propose="proposeWord"
         @reset="resetResults"
       />
