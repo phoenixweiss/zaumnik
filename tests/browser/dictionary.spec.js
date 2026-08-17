@@ -502,7 +502,62 @@ test('кнопка поиска открывает те же результат�
   await expect(page.locator('.word-detail')).toHaveCount(0)
 })
 
-test('указывает автора в компактном подвале', async ({ page }) => {
+test('освобождает подсказку поиска и центрирует алфавит на мобильном', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('./')
+
+  const searchStyles = await page.locator('.search-field').evaluate((field) => {
+    const input = field.querySelector('input')
+    const icon = field.querySelector('.search-icon')
+
+    return {
+      iconDisplay: getComputedStyle(icon).display,
+      inputPaddingLeft: getComputedStyle(input).paddingLeft,
+      inputPaddingRight: getComputedStyle(input).paddingRight,
+      placeholderFontSize: getComputedStyle(input, '::placeholder').fontSize,
+    }
+  })
+
+  expect(searchStyles).toEqual({
+    iconDisplay: 'none',
+    inputPaddingLeft: '16px',
+    inputPaddingRight: '84px',
+    placeholderFontSize: '16px',
+  })
+
+  await page.getByRole('searchbox').fill('амбивалентный')
+  await expect(page.getByRole('searchbox')).toHaveCSS('padding-right', '116px')
+
+  const letterBoxes = await page
+    .locator('.letter-button')
+    .evaluateAll((items) =>
+      items.map((item) => {
+        const box = item.getBoundingClientRect()
+        return {
+          top: Math.round(box.top),
+          left: box.left,
+          right: box.right,
+          width: box.width,
+        }
+      }),
+    )
+  const rows = Object.values(
+    Object.groupBy(letterBoxes, (box) => String(box.top)),
+  )
+
+  expect(rows).toHaveLength(3)
+  for (const row of rows) {
+    expect(row).toHaveLength(7)
+    expect(row[0].width).toBeGreaterThanOrEqual(44)
+    expect((row[0].left + row.at(-1).right) / 2).toBeCloseTo(195, 0)
+  }
+})
+
+test('выстраивает мобильный подвал в центрированную стопку', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 492, height: 652 })
   await page.goto('./')
 
@@ -520,7 +575,18 @@ test('указывает автора в компактном подвале', a
     'https://sass-lang.com/',
   )
   await expect(footer.getByRole('link', { name: 'GitHub' })).toHaveCount(0)
-  expect((await footer.boundingBox()).height).toBeLessThanOrEqual(70)
+
+  const versionBox = await footer.locator('.footer-version').boundingBox()
+  const creditBox = await footer.locator('.footer-credit').boundingBox()
+  const stackBox = await footer.locator('.footer-stack').boundingBox()
+  const center = (box) => box.x + box.width / 2
+
+  expect(versionBox.y).toBeLessThan(creditBox.y)
+  expect(creditBox.y).toBeLessThan(stackBox.y)
+  expect(center(versionBox)).toBeCloseTo(246, 0)
+  expect(center(creditBox)).toBeCloseTo(246, 0)
+  expect(center(stackBox)).toBeCloseTo(246, 0)
+  expect((await footer.boundingBox()).height).toBeLessThanOrEqual(80)
 })
 
 test('укладывает алфавит в две строки на экране ноутбука', async ({ page }) => {
