@@ -8,6 +8,7 @@ import SearchField from '@/components/SearchField.vue'
 import WordDetail from '@/components/WordDetail.vue'
 import WordList from '@/components/WordList.vue'
 import { alphabet, dictionary, dictionaryStats } from '@/data/dictionary'
+import { findClosestEntries, normalizeSearch } from '@/data/search'
 import { slugify } from '@/data/word'
 import { useDictionaryStore } from '@/stores/dictionary'
 
@@ -22,15 +23,6 @@ const exampleEntry =
   exampleEntries[Math.floor(Math.random() * exampleEntries.length)]
 const exampleName = `${exampleEntry.name[0].toLocaleLowerCase('ru-RU')}${exampleEntry.name.slice(1)}`
 const searchPlaceholder = `Например, ${exampleName}`
-
-const normalizeSearch = (value) =>
-  value
-    .normalize('NFD')
-    .replace(/\u0301/g, '')
-    .normalize('NFC')
-    .toLocaleLowerCase('ru-RU')
-    .replace(/ё/g, 'е')
-    .trim()
 
 const selectedEntry = computed(() =>
   dictionary.find((entry) => entry.slug === route.params.slug),
@@ -116,6 +108,11 @@ const searchSuggestions = computed(() => {
     .slice(0, 7)
 })
 
+const closestEntries = computed(() => {
+  if (filteredEntries.value.length) return []
+  return findClosestEntries(dictionary, store.query)
+})
+
 const scrollToResults = async () => {
   await nextTick()
   await new Promise((resolve) =>
@@ -132,7 +129,16 @@ const proposeWord = async () => {
 }
 
 const submitSearch = () => {
+  if (!store.query.trim()) {
+    selectEntry(exampleEntry)
+    return
+  }
+
   if (store.query.trim() && filteredEntries.value.length === 0) {
+    if (closestEntries.value.length) {
+      scrollToResults()
+      return
+    }
     proposeWord()
     return
   }
@@ -273,6 +279,7 @@ watch(
         :show-more-count="isFullList ? 20 : 10"
         :eyebrow="isFullList ? 'Весь словарь' : 'Коллекция'"
         :proposed-word="store.query"
+        :closest-entries="closestEntries"
         @select="selectEntry"
         @show-more="showMore"
         @propose="proposeWord"

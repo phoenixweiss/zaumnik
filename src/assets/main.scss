@@ -1057,6 +1057,34 @@ input:focus-visible {
   font-size: 0.75rem;
 }
 
+.word-list-proposal {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.word-list-proposal p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.7rem;
+}
+
+.word-list-proposal-actions {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.word-list-proposal-actions .text-button {
+  margin: 0;
+}
+
 .empty-state-actions {
   display: flex;
   gap: 1rem;

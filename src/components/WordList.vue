@@ -1,4 +1,6 @@
 <script setup>
+import { computed } from 'vue'
+
 import WordName from './WordName.vue'
 
 const wordForm = (count) => {
@@ -11,34 +13,47 @@ const wordForm = (count) => {
   return 'слов'
 }
 
-defineProps({
+const props = defineProps({
   entries: { type: Array, required: true },
   selectedSlug: { type: String, default: '' },
   resultCount: { type: Number, required: true },
   canShowMore: { type: Boolean, default: false },
   showMoreCount: { type: Number, default: 10 },
   proposedWord: { type: String, default: '' },
+  closestEntries: { type: Array, default: () => [] },
   eyebrow: { type: String, default: 'Коллекция' },
 })
 
 defineEmits(['select', 'show-more', 'reset', 'propose'])
+
+const isCorrection = computed(
+  () => !props.entries.length && props.closestEntries.length > 0,
+)
+const displayedEntries = computed(() =>
+  isCorrection.value ? props.closestEntries : props.entries,
+)
+const displayedCount = computed(() =>
+  isCorrection.value ? props.closestEntries.length : props.resultCount,
+)
 </script>
 
 <template>
   <section class="word-list-panel" aria-labelledby="word-list-title">
     <header class="panel-heading">
       <div>
-        <p class="eyebrow">{{ eyebrow }}</p>
+        <p class="eyebrow">
+          {{ isCorrection ? 'Возможно, вы искали' : eyebrow }}
+        </p>
         <h2 id="word-list-title">
-          {{ resultCount }} {{ wordForm(resultCount) }}
+          {{ displayedCount }} {{ wordForm(displayedCount) }}
         </h2>
       </div>
       <span class="list-key"><i class="ready-dot"></i> с определением</span>
     </header>
 
-    <div v-if="entries.length" class="word-list">
+    <div v-if="displayedEntries.length" class="word-list">
       <button
-        v-for="entry in entries"
+        v-for="entry in displayedEntries"
         :key="entry.id"
         class="word-row"
         :class="{ selected: entry.slug === selectedSlug }"
@@ -67,6 +82,23 @@ defineEmits(['select', 'show-more', 'reset', 'propose'])
       >
         Показать ещё {{ Math.min(showMoreCount, resultCount - entries.length) }}
       </button>
+
+      <div v-if="isCorrection" class="word-list-proposal">
+        <p>Нужного слова всё-таки нет?</p>
+        <div class="word-list-proposal-actions">
+          <button
+            v-if="proposedWord.trim()"
+            class="empty-state-propose"
+            type="button"
+            @click="$emit('propose')"
+          >
+            Предложить добавить «{{ proposedWord.trim() }}»
+          </button>
+          <button class="text-button" type="button" @click="$emit('reset')">
+            Сбросить поиск
+          </button>
+        </div>
+      </div>
     </div>
 
     <div v-else class="empty-state">

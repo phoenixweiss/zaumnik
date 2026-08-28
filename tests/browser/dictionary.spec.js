@@ -63,6 +63,25 @@ test('показывает крупную багровую кнопку очис
   await expect(clear).toHaveCount(0)
 })
 
+test('открывает слово из подсказки при отправке пустого поиска', async ({
+  page,
+}) => {
+  await page.goto('./')
+
+  const search = page.getByRole('searchbox')
+  const placeholder = await search.getAttribute('placeholder')
+  const suggestedWord = placeholder.replace(/^Например, /, '')
+
+  await page.getByRole('button', { name: 'Найти' }).click()
+
+  await expect(page).toHaveURL(/#\/word\/[^/]+$/)
+  const heading = page.locator('.word-detail').getByRole('heading')
+  await expect(heading).toBeVisible()
+  expect((await heading.textContent()).toLocaleLowerCase('ru-RU')).toBe(
+    suggestedWord.toLocaleLowerCase('ru-RU'),
+  )
+})
+
 test('предлагает подходящие слова и поддерживает выбор с клавиатуры', async ({
   page,
 }) => {
@@ -377,6 +396,31 @@ test('предлагает добавить слово из пустой пои�
     /#\/word\/%D0%BF%D1%80%D0%BE%D0%BA%D1%80%D0%B0%D1%81%D1%82%D0%B8%D0%BD%D0%B0%D1%86%D0%B8%D1%8F$/,
   )
   await expect(page.locator('.missing-word')).toBeVisible()
+})
+
+test('предлагает близкое слово при опечатке', async ({ page }) => {
+  await page.goto('./')
+
+  const search = page.getByRole('searchbox')
+  await search.fill('деморкация')
+  await search.press('Enter')
+
+  const suggestions = page.locator('.word-list-panel')
+  const demarcation = suggestions.locator('.word-row').first()
+
+  await expect(suggestions.getByText('Возможно, вы искали')).toBeVisible()
+  await expect(suggestions.getByRole('heading')).toHaveText('1 слово')
+  await expect(demarcation).toBeVisible()
+  await expect(demarcation).toContainText('Демарка')
+  await expect(page.locator('.missing-word')).toHaveCount(0)
+  await demarcation.click()
+
+  await expect(page).toHaveURL(
+    /#\/word\/%D0%B4%D0%B5%D0%BC%D0%B0%D1%80%D0%BA%D0%B0%D1%86%D0%B8%D1%8F$/,
+  )
+  await expect(page.locator('.word-detail').getByRole('heading')).toHaveText(
+    'Демаркация',
+  )
 })
 
 test('открывает предложение слова по Enter из поиска', async ({ page }) => {
