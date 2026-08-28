@@ -56,11 +56,19 @@ const expectedSeedWords = [
   'Штрибан',
   'Эгида',
   'Эгрегор',
+  'Апофения',
+  'Палимпсест',
+  'Трюизм',
+  'Фронда',
+  'Идиосинкразия',
+  'Обскурантизм',
+  'Коннотация',
+  'Лиминальный',
 ]
 
-test('импортирован полный набор названий из исходной подборки', () => {
+test('словарь содержит исходную подборку и согласованные дополнения', () => {
   assert.equal(sections.length, 21)
-  assert.equal(words.length, 220)
+  assert.equal(words.length, 228)
 
   const names = new Set(words.map((word) => word.name))
   for (const expectedWord of expectedSeedWords) {
@@ -102,7 +110,7 @@ test('все слова получили определения', () => {
 })
 
 test('подтверждённые синонимы заполнены без самоссылок', () => {
-  assert.equal(words.filter((word) => word.synonyms.length).length, 153)
+  assert.equal(words.filter((word) => word.synonyms.length).length, 159)
 
   for (const word of words) {
     const name = word.name.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е')
@@ -117,7 +125,7 @@ test('подтверждённые синонимы заполнены без с
 })
 
 test('подтверждённые антонимы заполнены без самоссылок', () => {
-  assert.equal(words.filter((word) => word.antonyms.length).length, 29)
+  assert.equal(words.filter((word) => word.antonyms.length).length, 32)
 
   for (const word of words) {
     const name = word.name.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е')
@@ -134,7 +142,7 @@ test('подтверждённые антонимы заполнены без с
 test('смысловые связи ведут к словам и работают в обе стороны', () => {
   assert.equal(
     words.reduce((total, word) => total + word.relations.length, 0),
-    32,
+    48,
   )
 
   const normalize = (value) =>

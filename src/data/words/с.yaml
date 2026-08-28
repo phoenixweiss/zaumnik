@@ -34,7 +34,9 @@ words:
       - значение
       - смысл
     antonyms: []
-    relations: []
+    relations:
+      - word: Коннотация
+        type: related
   - name: Сентенция
     stress:
       - 5
@@ -47,7 +49,9 @@ words:
       - изречение
       - нравоучение
     antonyms: []
-    relations: []
+    relations:
+      - word: Трюизм
+        type: related
   - name: Синергия
     stress:
       - 7

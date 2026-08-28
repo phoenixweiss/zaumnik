@@ -57,7 +57,9 @@ words:
       - намёк
       - отголосок
     antonyms: []
-    relations: []
+    relations:
+      - word: Палимпсест
+        type: related
   - name: Реноме
     stress:
       - 6
