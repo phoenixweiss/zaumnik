@@ -64,11 +64,12 @@ const expectedSeedWords = [
   'Обскурантизм',
   'Коннотация',
   'Лиминальный',
+  'Канон',
 ]
 
 test('словарь содержит исходную подборку и согласованные дополнения', () => {
   assert.equal(sections.length, 21)
-  assert.equal(words.length, 228)
+  assert.equal(words.length, 229)
 
   const names = new Set(words.map((word) => word.name))
   for (const expectedWord of expectedSeedWords) {
@@ -110,7 +111,7 @@ test('все слова получили определения', () => {
 })
 
 test('подтверждённые синонимы заполнены без самоссылок', () => {
-  assert.equal(words.filter((word) => word.synonyms.length).length, 159)
+  assert.equal(words.filter((word) => word.synonyms.length).length, 160)
 
   for (const word of words) {
     const name = word.name.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е')
@@ -142,7 +143,7 @@ test('подтверждённые антонимы заполнены без с
 test('смысловые связи ведут к словам и работают в обе стороны', () => {
   assert.equal(
     words.reduce((total, word) => total + word.relations.length, 0),
-    48,
+    50,
   )
 
   const normalize = (value) =>

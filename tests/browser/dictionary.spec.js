@@ -483,7 +483,7 @@ test('оставляет только общее число слов и не п�
 
   await expect(
     page.getByRole('button', { name: 'Показать все слова коллекции' }),
-  ).toContainText('228 слов в коллекции')
+  ).toContainText('229 слов в коллекции')
   await expect(
     page.getByRole('button', { name: 'Показать все слова коллекции' }),
   ).toContainText('Показать все')
@@ -504,7 +504,7 @@ test('открывает весь словарь и подгружает сло�
   const list = page.locator('.word-list-panel')
   const rows = list.locator('.word-row')
   await expect(list.getByText('Весь словарь', { exact: true })).toBeVisible()
-  await expect(list.getByRole('heading')).toHaveText('228 слов')
+  await expect(list.getByRole('heading')).toHaveText('229 слов')
   await expect(rows).toHaveCount(20)
 
   await list.getByRole('button', { name: 'Показать ещё 20' }).click()

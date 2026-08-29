@@ -107,5 +107,7 @@ words:
     synonyms: []
     antonyms: []
     relations:
+      - word: Канон
+        type: confused
       - word: Обскурантизм
         type: related
