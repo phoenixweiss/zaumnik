@@ -4,7 +4,7 @@ import test from 'node:test'
 
 import yaml from 'js-yaml'
 
-import { formatWord, slugify } from '../../src/data/word.js'
+import { formatWord, slugify, wordForm } from '../../src/data/word.js'
 
 const wordsDirectory = new URL('../../src/data/words/', import.meta.url)
 
@@ -65,11 +65,16 @@ const expectedSeedWords = [
   'Коннотация',
   'Лиминальный',
   'Канон',
+  'Ремиссия',
+  'Сиквел',
+  'Приквел',
+  'Кринж',
+  'Испанский стыд',
 ]
 
 test('словарь содержит исходную подборку и согласованные дополнения', () => {
   assert.equal(sections.length, 21)
-  assert.equal(words.length, 229)
+  assert.equal(words.length, 234)
 
   const names = new Set(words.map((word) => word.name))
   for (const expectedWord of expectedSeedWords) {
@@ -111,7 +116,7 @@ test('все слова получили определения', () => {
 })
 
 test('подтверждённые синонимы заполнены без самоссылок', () => {
-  assert.equal(words.filter((word) => word.synonyms.length).length, 160)
+  assert.equal(words.filter((word) => word.synonyms.length).length, 162)
 
   for (const word of words) {
     const name = word.name.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е')
@@ -126,7 +131,7 @@ test('подтверждённые синонимы заполнены без с
 })
 
 test('подтверждённые антонимы заполнены без самоссылок', () => {
-  assert.equal(words.filter((word) => word.antonyms.length).length, 32)
+  assert.equal(words.filter((word) => word.antonyms.length).length, 33)
 
   for (const word of words) {
     const name = word.name.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е')
@@ -143,7 +148,7 @@ test('подтверждённые антонимы заполнены без с
 test('смысловые связи ведут к словам и работают в обе стороны', () => {
   assert.equal(
     words.reduce((total, word) => total + word.relations.length, 0),
-    50,
+    56,
   )
 
   const normalize = (value) =>
@@ -172,6 +177,39 @@ test('для каждого слова указано ударение', () => {
     words.filter((word) => word.stress.length === 0),
     [],
   )
+})
+
+test('новые статьи сохраняют согласованные ударения и смысловые связи', () => {
+  const byName = new Map(words.map((word) => [word.name, word]))
+  const expectedForms = new Map([
+    ['Ремиссия', 'Реми́ссия'],
+    ['Сиквел', 'Си́квел'],
+    ['Приквел', 'При́квел'],
+    ['Кринж', 'Кри́нж'],
+    ['Испанский стыд', 'Испа́нский сты́д'],
+  ])
+
+  for (const [name, expected] of expectedForms) {
+    const word = byName.get(name)
+    assert.equal(formatWord(word.name, word.stress), expected)
+  }
+
+  for (const name of ['Ремиссия', 'Кринж', 'Испанский стыд']) {
+    assert.deepEqual(byName.get(name).synonyms, [])
+  }
+
+  for (const [name, relatedNames] of [
+    ['Ремиссия', []],
+    ['Сиквел', ['Приквел']],
+    ['Приквел', ['Сиквел']],
+    ['Кринж', ['Испанский стыд', 'Моветон']],
+    ['Испанский стыд', ['Кринж']],
+  ]) {
+    assert.deepEqual(
+      byName.get(name).relations,
+      relatedNames.map((word) => ({ word, type: 'related' })),
+    )
+  }
 })
 
 test('каждая запись содержит расширяемые словарные поля', () => {
@@ -204,6 +242,26 @@ test('ударения нумеруются только по буквам', () 
     formatWord('Когнитивный диссонанс', [7, 18]),
     'Когнити́вный диссона́нс',
   )
+})
+
+test('счётчики слов используют правильное склонение', () => {
+  for (const [count, expected] of [
+    [0, 'слов'],
+    [1, 'слово'],
+    [2, 'слова'],
+    [4, 'слова'],
+    [5, 'слов'],
+    [11, 'слов'],
+    [12, 'слов'],
+    [14, 'слов'],
+    [21, 'слово'],
+    [111, 'слов'],
+    [114, 'слов'],
+    [229, 'слов'],
+    [234, 'слова'],
+  ]) {
+    assert.equal(wordForm(count), expected)
+  }
 })
 
 test('однословные статьи показывают выбранный вариант ударения', () => {

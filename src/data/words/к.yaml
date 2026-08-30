@@ -353,6 +353,20 @@ words:
     relations:
       - word: Фронда
         type: related
+  - name: Кринж
+    stress:
+      - 3
+    definition: >-
+      Разговорное название чувства неловкости и стыда за чужие слова или поступки, а иногда — за
+      собственное поведение в прошлом. Кринжем называют и саму ситуацию, на которую неловко даже
+      смотреть.
+    synonyms: []
+    antonyms: []
+    relations:
+      - word: Испанский стыд
+        type: related
+      - word: Моветон
+        type: related
   - name: Ксива
     stress:
       - 3

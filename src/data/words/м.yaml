@@ -54,7 +54,9 @@ words:
     synonyms:
       - дурной тон
     antonyms: []
-    relations: []
+    relations:
+      - word: Кринж
+        type: related
   - name: Моджо
     stress:
       - 2

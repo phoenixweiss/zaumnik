@@ -9,7 +9,7 @@ import WordDetail from '@/components/WordDetail.vue'
 import WordList from '@/components/WordList.vue'
 import { alphabet, dictionary, dictionaryStats } from '@/data/dictionary'
 import { findClosestEntries, normalizeSearch } from '@/data/search'
-import { slugify } from '@/data/word'
+import { slugify, wordForm } from '@/data/word'
 import { useDictionaryStore } from '@/stores/dictionary'
 
 const store = useDictionaryStore()
@@ -257,7 +257,8 @@ watch(
           aria-label="Показать все слова коллекции"
           @click="openAllWords"
         >
-          <strong>{{ dictionaryStats.total }}</strong> слов в коллекции
+          <strong>{{ dictionaryStats.total }}</strong>
+          {{ wordForm(dictionaryStats.total) }} в коллекции
           <span>Показать все →</span>
         </button>
       </div>

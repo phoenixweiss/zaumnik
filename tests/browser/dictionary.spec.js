@@ -171,6 +171,33 @@ test('кнопка другого слова не возвращает теку�
   )
 })
 
+test('связывает кринж и испанский стыд без блока синонимов', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('./#/word/кринж')
+
+  const detail = page.locator('.word-detail')
+  const related = detail.getByRole('region', { name: 'Рядом по смыслу' })
+  await expect(detail.getByRole('region', { name: 'Синонимы' })).toHaveCount(0)
+  await related.getByRole('button', { name: /Испа́нский сты́д/ }).click()
+
+  await expect(detail.getByRole('heading')).toHaveText('Испанский стыд')
+  await expect(detail.getByRole('heading').locator('.stress-mark')).toHaveText([
+    'а',
+    'ы',
+  ])
+  await expect(detail.getByRole('region', { name: 'Синонимы' })).toHaveCount(0)
+  const layout = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    content: document.documentElement.scrollWidth,
+  }))
+  expect(layout.content).toBeLessThanOrEqual(layout.viewport)
+
+  await related.getByRole('button', { name: /Кри́нж/ }).click()
+  await expect(detail.getByRole('heading')).toHaveText('Кринж')
+})
+
 test('копирует прямую ссылку на словарную статью', async ({ page }) => {
   await page.addInitScript(() => {
     window.__copiedWordLink = ''
@@ -483,7 +510,7 @@ test('оставляет только общее число слов и не п�
 
   await expect(
     page.getByRole('button', { name: 'Показать все слова коллекции' }),
-  ).toContainText('229 слов в коллекции')
+  ).toContainText('234 слова в коллекции')
   await expect(
     page.getByRole('button', { name: 'Показать все слова коллекции' }),
   ).toContainText('Показать все')
@@ -504,7 +531,7 @@ test('открывает весь словарь и подгружает сло�
   const list = page.locator('.word-list-panel')
   const rows = list.locator('.word-row')
   await expect(list.getByText('Весь словарь', { exact: true })).toBeVisible()
-  await expect(list.getByRole('heading')).toHaveText('229 слов')
+  await expect(list.getByRole('heading')).toHaveText('234 слова')
   await expect(rows).toHaveCount(20)
 
   await list.getByRole('button', { name: 'Показать ещё 20' }).click()

@@ -1,17 +1,9 @@
 <script setup>
 import { computed } from 'vue'
 
+import { wordForm } from '@/data/word'
+
 import WordName from './WordName.vue'
-
-const wordForm = (count) => {
-  const mod100 = count % 100
-  const mod10 = count % 10
-
-  if (mod100 >= 11 && mod100 <= 14) return 'слов'
-  if (mod10 === 1) return 'слово'
-  if (mod10 >= 2 && mod10 <= 4) return 'слова'
-  return 'слов'
-}
 
 const props = defineProps({
   entries: { type: Array, required: true },
