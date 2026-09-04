@@ -1,32 +1,14 @@
 <script setup>
 import { computed } from 'vue'
 
-import { formatWord } from '../data/word'
+import { formatWord, wordParts } from '../data/word'
 
 const props = defineProps({
   name: { type: String, required: true },
   stress: { type: Array, default: () => [] },
 })
 
-const parts = computed(() => {
-  const positions = new Set(props.stress)
-  const result = []
-  let letterPosition = 0
-
-  for (const character of props.name) {
-    if (/[А-ЯЁа-яё]/.test(character)) letterPosition += 1
-    const stressed = positions.has(letterPosition) && !/[Ёё]/.test(character)
-    const previous = result.at(-1)
-
-    if (!stressed && previous && !previous.stressed) {
-      previous.text += character
-    } else {
-      result.push({ text: character, stressed })
-    }
-  }
-
-  return result
-})
+const parts = computed(() => wordParts(props.name, props.stress))
 </script>
 
 <template>

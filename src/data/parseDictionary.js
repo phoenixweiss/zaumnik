@@ -1,19 +1,11 @@
 import { slugify } from './word.js'
+import { normalizeText as normalize } from './normalize.js'
 
 const cleanMarkdown = (value = '') =>
   value
     .replace(/\*\*/g, '')
     .replace(/\s+/g, ' ')
     .replace(/\s+([,.;:])/g, '$1')
-    .trim()
-
-const normalize = (value = '') =>
-  value
-    .normalize('NFD')
-    .replace(/\u0301/g, '')
-    .normalize('NFC')
-    .toLocaleLowerCase('ru-RU')
-    .replace(/ё/g, 'е')
     .trim()
 
 const relationLabel = (source) => {

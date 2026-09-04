@@ -1,14 +1,7 @@
-const normalize = (value = '') =>
-  value
-    .normalize('NFD')
-    .replace(/\u0301/g, '')
-    .normalize('NFC')
-    .toLocaleLowerCase('ru-RU')
-    .replace(/ё/g, 'е')
-    .trim()
+import { normalizeText } from './normalize.js'
 
 export const slugify = (value) =>
-  normalize(value)
+  normalizeText(value)
     .replace(/[^а-яa-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
 
@@ -22,16 +15,26 @@ export const wordForm = (count) => {
   return 'слов'
 }
 
-export const formatWord = (name, stress = []) => {
+export const wordParts = (name, stress = []) => {
   const positions = new Set(stress)
+  const parts = []
   let letterPosition = 0
 
-  return [...name]
-    .map((character) => {
-      if (/[А-ЯЁа-яё]/.test(character)) letterPosition += 1
-      return positions.has(letterPosition) && !/[Ёё]/.test(character)
-        ? `${character}\u0301`
-        : character
-    })
-    .join('')
+  for (const character of name) {
+    const isLetter = /[А-ЯЁа-яё]/.test(character)
+    if (isLetter) letterPosition += 1
+    const stressed =
+      isLetter && positions.has(letterPosition) && !/[Ёё]/.test(character)
+    const previous = parts.at(-1)
+
+    if (!stressed && previous && !previous.stressed) previous.text += character
+    else parts.push({ text: character, stressed })
+  }
+
+  return parts
 }
+
+export const formatWord = (name, stress = []) =>
+  wordParts(name, stress)
+    .map(({ text, stressed }) => (stressed ? `${text}\u0301` : text))
+    .join('')

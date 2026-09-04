@@ -12,6 +12,8 @@ import { fileURLToPath } from 'node:url'
 
 import yaml from 'js-yaml'
 
+import { normalizeWordKey as normalize } from '../../src/data/normalize.js'
+
 const scriptDirectory = dirname(fileURLToPath(import.meta.url))
 export const projectRoot = resolve(scriptDirectory, '../..')
 export const wordsDirectory = process.env.ZAUMNIK_WORDS_DIRECTORY
@@ -19,8 +21,6 @@ export const wordsDirectory = process.env.ZAUMNIK_WORDS_DIRECTORY
   : resolve(projectRoot, 'src/data/words')
 
 const collator = new Intl.Collator('ru', { sensitivity: 'base' })
-const normalize = (value) =>
-  value.trim().toLocaleLowerCase('ru-RU').replace(/ё/g, 'е')
 const normalizeName = (value) => {
   const name = String(value || '')
     .replace(/\s+/g, ' ')

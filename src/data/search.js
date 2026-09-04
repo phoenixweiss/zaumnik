@@ -1,11 +1,6 @@
-export const normalizeSearch = (value = '') =>
-  value
-    .normalize('NFD')
-    .replace(/\u0301/g, '')
-    .normalize('NFC')
-    .toLocaleLowerCase('ru-RU')
-    .replace(/ё/g, 'е')
-    .trim()
+import { normalizeText as normalizeSearch } from './normalize.js'
+
+export { normalizeSearch }
 
 const editDistance = (left, right) => {
   const rows = Array.from({ length: left.length + 1 }, (_, row) =>

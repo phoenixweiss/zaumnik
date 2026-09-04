@@ -1,5 +1,7 @@
 import { resolve } from 'node:path'
 
+import { normalizeWordKey as normalize } from '../src/data/normalize.js'
+
 import { readWords, wordsDirectory, writeWords } from './lib/wordFiles.js'
 
 const args = process.argv.slice(2)
@@ -58,8 +60,6 @@ if (options.stress.some((position) => !Number.isInteger(position))) {
 }
 
 const words = readWords()
-const normalize = (value) =>
-  value.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е').trim()
 
 if (words.some((word) => normalize(word.name) === normalize(name))) {
   console.error(`Слово «${name}» уже есть в словаре.`)
