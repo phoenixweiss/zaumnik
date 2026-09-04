@@ -336,17 +336,25 @@ test('убирает подзаголовок статьи и выравнива
   await page.goto('./#/word/дежавю')
 
   const detail = page.locator('.word-detail')
+  await expect(detail).toBeVisible()
+  await page.evaluate(() => document.fonts.ready)
   await expect(
     detail.getByText('Словарная статья', { exact: true }),
   ).toHaveCount(0)
 
-  const [letterBox, headingBox] = await Promise.all([
-    detail.locator('.word-letter').boundingBox(),
-    detail.getByRole('heading').boundingBox(),
-  ])
-  const letterCenter = letterBox.y + letterBox.height / 2
-  const headingCenter = headingBox.y + headingBox.height / 2
-  expect(Math.abs(letterCenter - headingCenter)).toBeLessThanOrEqual(3)
+  // Оба замера — в одном кадре: плавный скролл меняет viewport-координаты.
+  const centerDifference = await detail
+    .locator('.detail-heading')
+    .evaluate((header) => {
+      const letter = header
+        .querySelector('.word-letter')
+        .getBoundingClientRect()
+      const heading = header.querySelector('h2').getBoundingClientRect()
+      return Math.abs(
+        letter.y + letter.height / 2 - heading.y - heading.height / 2,
+      )
+    })
+  expect(centerDifference).toBeLessThanOrEqual(3)
 })
 
 test('объясняет отсутствие слова с известной буквой и предлагает его добавить', async ({
