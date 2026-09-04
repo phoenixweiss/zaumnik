@@ -1,9 +1,12 @@
 import { formatWord, slugify } from './word'
+import { validateDictionary } from './validateDictionary.js'
 
 const wordFiles = import.meta.glob('./words/*.yaml', {
   eager: true,
   import: 'default',
 })
+
+validateDictionary(wordFiles)
 
 const sections = Object.values(wordFiles).sort((left, right) =>
   left.letter.localeCompare(right.letter, 'ru'),
@@ -29,22 +32,19 @@ const bySlug = new Map(rawEntries.map((entry) => [entry.slug, entry]))
 
 export const dictionary = rawEntries.map((entry) => ({
   ...entry,
-  relations: entry.relationData
-    .map((relation) => {
-      const related = bySlug.get(slugify(relation.word))
-      if (!related) return null
-      return {
-        slug: related.slug,
-        name: related.name,
-        stress: related.stress,
-        label: {
-          opposite: 'Противоположное',
-          confused: 'Часто путают',
-          related: 'Связанное',
-        }[relation.type || 'related'],
-      }
-    })
-    .filter(Boolean),
+  relations: entry.relationData.map((relation) => {
+    const related = bySlug.get(slugify(relation.word))
+    return {
+      slug: related.slug,
+      name: related.name,
+      stress: related.stress,
+      label: {
+        opposite: 'Противоположное',
+        confused: 'Часто путают',
+        related: 'Связанное',
+      }[relation.type || 'related'],
+    }
+  }),
   relationData: undefined,
 }))
 

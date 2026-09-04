@@ -12,7 +12,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "yarn words:check && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "test": "yarn test:version && yarn test:data && yarn test:browser",
@@ -20,6 +20,7 @@
     "test:data": "node --test tests/data/*.test.js tests/scripts/*.test.js",
     "test:browser": "yarn build && playwright test",
     "word:add": "node scripts/add-word.js",
+    "words:check": "node scripts/check-words.js",
     "words:rebuild": "node scripts/rebuild-words.js",
     "words:import": "node scripts/import-markdown.js",
     "format": "prettier --write .github CHANGELOG.md package.json public scripts src tests docs README.md index.html eslint.config.js playwright.config.js vite.config.js",
