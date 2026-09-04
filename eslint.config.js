@@ -10,8 +10,26 @@ export default [
     ignores: ['**/dist/*', '**/node_modules/*'],
   },
   {
-    languageOptions: { globals: { ...globals.browser, ...globals.node } },
+    files: ['src/**/*.{js,mjs,cjs,vue}'],
+    languageOptions: { globals: globals.browser },
+  },
+  {
+    files: [
+      'scripts/**/*.{js,mjs,cjs}',
+      'tests/**/*.{js,mjs,cjs}',
+      '*.config.{js,mjs,cjs}',
+    ],
+    languageOptions: { globals: globals.node },
+  },
+  {
+    // Файл теста выполняется в Node, callbacks evaluate/addInitScript — в браузере.
+    files: ['tests/browser/**/*.{js,mjs,cjs}'],
+    languageOptions: { globals: globals.browser },
   },
   pluginJs.configs.recommended,
-  ...pluginVue.configs['flat/essential'],
+  // Vue preset сам добавляет browser globals: ограничиваем весь preset компонентами.
+  ...pluginVue.configs['flat/essential'].map((config) => ({
+    ...config,
+    files: ['src/**/*.vue'],
+  })),
 ]
