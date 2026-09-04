@@ -17,6 +17,16 @@ const words = sections.flatMap((section) =>
   section.words.map((word) => ({ ...word, letter: section.letter })),
 )
 
+// Снимок согласованной коллекции. Обновлять только при намеренном изменении
+// данных, не вычислять из YAML: эти значения защищают от случайной потери статей.
+const expectedDictionaryCounts = {
+  letterSections: 21,
+  words: 234,
+  wordsWithSynonyms: 162, // Число статей, не отдельных синонимов.
+  wordsWithAntonyms: 33, // Число статей, не отдельных антонимов.
+  directedRelations: 56, // Взаимная связь А ↔ Б считается как два перехода.
+}
+
 const expectedSeedWords = [
   'Аберрация',
   'Абстиненция',
@@ -73,8 +83,8 @@ const expectedSeedWords = [
 ]
 
 test('словарь содержит исходную подборку и согласованные дополнения', () => {
-  assert.equal(sections.length, 21)
-  assert.equal(words.length, 234)
+  assert.equal(sections.length, expectedDictionaryCounts.letterSections)
+  assert.equal(words.length, expectedDictionaryCounts.words)
 
   const names = new Set(words.map((word) => word.name))
   for (const expectedWord of expectedSeedWords) {
@@ -116,7 +126,10 @@ test('все слова получили определения', () => {
 })
 
 test('подтверждённые синонимы заполнены без самоссылок', () => {
-  assert.equal(words.filter((word) => word.synonyms.length).length, 162)
+  assert.equal(
+    words.filter((word) => word.synonyms.length).length,
+    expectedDictionaryCounts.wordsWithSynonyms,
+  )
 
   for (const word of words) {
     const name = word.name.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е')
@@ -131,7 +144,10 @@ test('подтверждённые синонимы заполнены без с
 })
 
 test('подтверждённые антонимы заполнены без самоссылок', () => {
-  assert.equal(words.filter((word) => word.antonyms.length).length, 33)
+  assert.equal(
+    words.filter((word) => word.antonyms.length).length,
+    expectedDictionaryCounts.wordsWithAntonyms,
+  )
 
   for (const word of words) {
     const name = word.name.toLocaleLowerCase('ru-RU').replace(/ё/g, 'е')
@@ -148,7 +164,7 @@ test('подтверждённые антонимы заполнены без с
 test('смысловые связи ведут к словам и работают в обе стороны', () => {
   assert.equal(
     words.reduce((total, word) => total + word.relations.length, 0),
-    56,
+    expectedDictionaryCounts.directedRelations,
   )
 
   const normalize = (value) =>
