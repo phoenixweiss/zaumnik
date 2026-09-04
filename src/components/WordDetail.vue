@@ -5,7 +5,6 @@ import WordName from './WordName.vue'
 
 const props = defineProps({
   entry: { type: Object, required: true },
-  isDaily: { type: Boolean, default: false },
 })
 
 defineEmits(['random', 'select-related'])
@@ -62,7 +61,6 @@ onBeforeUnmount(() => window.clearTimeout(resetCopyStateTimer))
         <header class="detail-heading">
           <span class="word-letter" aria-hidden="true">{{ entry.letter }}</span>
           <div>
-            <p v-if="isDaily" class="eyebrow">Слово дня</p>
             <h2><WordName :name="entry.name" :stress="entry.stress" /></h2>
           </div>
         </header>

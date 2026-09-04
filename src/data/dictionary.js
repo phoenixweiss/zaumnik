@@ -52,6 +52,4 @@ export const alphabet = [...new Set(dictionary.map((entry) => entry.letter))]
 
 export const dictionaryStats = {
   total: dictionary.length,
-  ready: dictionary.filter((entry) => entry.hasDefinition).length,
-  drafts: dictionary.filter((entry) => !entry.hasDefinition).length,
 }
