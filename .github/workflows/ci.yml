@@ -36,7 +36,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 22.12.0
+          node-version-file: .nvmrc
 
       - name: Enable Yarn Classic
         run: |
@@ -45,7 +45,7 @@ jobs:
 
       - name: Verify runtime versions
         run: |
-          test "$(node --version)" = "v22.12.0"
+          test "$(node --version)" = "v$(cat .nvmrc)"
           test "$(yarn --version)" = "1.22.22"
 
       - name: Install dependencies
