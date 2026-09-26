@@ -147,7 +147,7 @@ test('показывает слова по букве и открывает сл
   const list = page.locator('.word-list-panel')
   await expect(letter).toHaveAttribute('aria-pressed', 'true')
   await expect(list).toBeVisible()
-  await expect(list.locator('.word-row')).toHaveCount(2)
+  await expect(list.locator('.word-row')).toHaveCount(5)
   await expect(list.locator('.word-row').first()).toContainText(/^Б/)
 
   await list.locator('.word-row').first().click()
@@ -481,7 +481,7 @@ test('считает запрос из одной буквы фильтром п
   const rows = list.locator('.word-row')
   const showMore = list.getByRole('button', { name: 'Показать ещё' })
 
-  await expect(list.getByRole('heading')).toHaveText('32 слова')
+  await expect(list.getByRole('heading')).toHaveText('38 слов')
   await expect(rows).toHaveCount(10)
   await expect(rows.first()).toContainText(/^А/)
   await showMore.click()
@@ -489,7 +489,7 @@ test('считает запрос из одной буквы фильтром п
   await showMore.click()
   await expect(rows).toHaveCount(30)
   await showMore.click()
-  await expect(rows).toHaveCount(32)
+  await expect(rows).toHaveCount(38)
   await expect(showMore).toHaveCount(0)
 })
 
@@ -518,7 +518,7 @@ test('оставляет только общее число слов и не п�
 
   await expect(
     page.getByRole('button', { name: 'Показать все слова коллекции' }),
-  ).toContainText('234 слова в коллекции')
+  ).toContainText('282 слова в коллекции')
   await expect(
     page.getByRole('button', { name: 'Показать все слова коллекции' }),
   ).toContainText('Показать все')
@@ -539,7 +539,7 @@ test('открывает весь словарь и подгружает сло�
   const list = page.locator('.word-list-panel')
   const rows = list.locator('.word-row')
   await expect(list.getByText('Весь словарь', { exact: true })).toBeVisible()
-  await expect(list.getByRole('heading')).toHaveText('234 слова')
+  await expect(list.getByRole('heading')).toHaveText('282 слова')
   await expect(rows).toHaveCount(20)
 
   await list.getByRole('button', { name: 'Показать ещё 20' }).click()
