@@ -1,9 +1,14 @@
 import { defineConfig } from '@playwright/test'
 
-const appUrl = 'http://127.0.0.1:4173/zaumnik/'
+import { getSiteConfig } from './config/site.js'
+
+const mode = process.env.ZAUMNIK_BUILD_MODE || 'production'
+const site = getSiteConfig(mode)
+const appUrl = `http://127.0.0.1:4173${site.base}`
 
 export default defineConfig({
   testDir: './tests/browser',
+  metadata: { siteUrl: site.url },
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
@@ -16,8 +21,8 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   webServer: {
-    command: 'yarn preview --host 127.0.0.1 --port 4173',
+    command: `yarn preview --mode ${mode} --host 127.0.0.1 --port 4173 --strictPort`,
     url: appUrl,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
   },
 })

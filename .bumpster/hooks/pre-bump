@@ -2,4 +2,4 @@
 
 set -eu
 
-yarn quality
+yarn quality:domain

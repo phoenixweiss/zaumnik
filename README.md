@@ -88,6 +88,18 @@ yarn words:import -- --seed
 Проект написан на обычном JavaScript и совместим со статическим размещением по
 адресу `/zaumnik/`.
 
+Для размещения в корне `https://zaumnik.phoenixweiss.me/` предусмотрен режим
+`domain`:
+
+```sh
+yarn build:domain
+yarn quality:domain
+```
+
+Обычные `yarn build` и `yarn quality` используют `/zaumnik/`. Адрес сайта,
+пути ресурсов и метаданные выбираются при сборке. Подготовка и порядок
+подключения описаны в [инструкции по домену](./docs/custom-domain.md).
+
 ## Версии
 
 Версия хранится в `VERSION` и синхронизируется с `package.json` только через

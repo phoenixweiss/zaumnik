@@ -9,7 +9,9 @@ const projectVersion = readFileSync(
 
 test('показывает фирменное написание, большой поиск и алфавит', async ({
   page,
-}) => {
+}, testInfo) => {
+  const siteUrl = testInfo.config.metadata.siteUrl
+  const base = new URL(siteUrl).pathname
   await page.goto('./')
 
   await expect(page).toHaveTitle(/Заумник/)
@@ -23,11 +25,23 @@ test('показывает фирменное написание, большой
   ).toHaveCSS('font-family', /Merriweather/)
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute(
     'href',
-    '/zaumnik/favicon.svg',
+    `${base}favicon.svg`,
   )
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
     'content',
-    'https://phoenixweiss.github.io/zaumnik/social-card.png',
+    `${siteUrl}social-card.png`,
+  )
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    siteUrl,
+  )
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+    'content',
+    siteUrl,
+  )
+  await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute(
+    'content',
+    `${siteUrl}social-card.png`,
   )
   await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
     'content',
@@ -47,6 +61,42 @@ test('показывает фирменное написание, большой
   await expect(
     page.getByRole('button', { name: 'Э', exact: true }),
   ).toBeVisible()
+})
+
+test('открывает прямую ссылку после перезагрузки и загружает ресурсы сайта', async ({
+  page,
+}, testInfo) => {
+  const errors = []
+  page.on('pageerror', (error) => errors.push(error.message))
+  page.on('requestfailed', (request) => errors.push(request.url()))
+  page.on('response', (response) => {
+    if (response.status() >= 400)
+      errors.push(`${response.status()} ${response.url()}`)
+  })
+
+  await page.goto('./#/word/аберрация')
+  await expect(page.locator('.word-detail')).toBeVisible()
+  await page.reload()
+  await expect(page.locator('.word-detail')).toBeVisible()
+  await page.evaluate(() => document.fonts.ready)
+  expect(
+    await page.evaluate(() =>
+      document.fonts.check('16px "Merriweather Variable"'),
+    ),
+  ).toBe(true)
+
+  for (const [file, type] of [
+    ['favicon.svg', 'image/svg+xml'],
+    ['social-card.png', 'image/png'],
+  ]) {
+    const response = await page.request.get(
+      new URL(file, testInfo.project.use.baseURL).href,
+    )
+    expect(response.ok()).toBe(true)
+    expect(response.headers()['content-type']).toContain(type)
+  }
+
+  expect(errors).toEqual([])
 })
 
 test('показывает крупную багровую кнопку очистки поиска', async ({ page }) => {

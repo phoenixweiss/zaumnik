@@ -115,7 +115,7 @@ jobs:
         run: yarn playwright install --with-deps --only-shell chromium
 
       - name: Run quality checks and build
-        run: yarn quality
+        run: yarn quality:domain
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
