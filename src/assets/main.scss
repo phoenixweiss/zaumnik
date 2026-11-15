@@ -1708,7 +1708,7 @@ input:focus-visible {
     grid-row: auto;
     grid-column: auto;
     min-height: 0;
-    padding: 2rem 0;
+    padding: 2rem 1.25rem;
     border-top: 1px solid var(--line);
   }
 
@@ -1718,7 +1718,7 @@ input:focus-visible {
   }
 
   .detail-heading h2 {
-    font-size: clamp(2.3rem, 12vw, 4rem);
+    font-size: clamp(1.75rem, 8.5vw, 2.75rem);
   }
 
   .definition {
